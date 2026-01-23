@@ -170,38 +170,49 @@
     .kpi b{display:block;font-size:12px;color:#245;line-height:1.2}
     .kpi span{display:block;margin-top:6px;font-size:19px;font-weight:950;line-height:1.1}
 
-    /* Case attestation (fix superposition PDF) */
-    .checkline{
-      display:flex;
-      gap:12px;
-      align-items:flex-start;
-      margin-top:10px;
-      padding:10px 12px;
-      border:1px dashed #cfe6da;
-      border-radius:12px;
-      background:#fbfffd;
-    }
-    .checkline input{
-      width:18px;height:18px;
-      margin-top:3px;
-      flex:0 0 auto;
-    }
-    .checkline b{
-      display:block;
-      font-weight:950;
-      font-size:13.5px;
-      line-height:1.25;
-      white-space:normal;
-      word-break:break-word;
-    }
-    .checkline small{
-      display:block;
-      margin-top:4px;
-      color:var(--muted);
-      font-size:12.5px;
-      line-height:1.25;
-      white-space:normal;
-    }
+  /* Case attestation : anti-chevauchement (PDF/html2canvas) */
+.checkline{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  margin-top:10px;
+  padding:10px 12px;
+  border:1px dashed #cfe6da;
+  border-radius:12px;
+  background:#fbfffd;
+}
+
+.checkline input{
+  width:18px;
+  height:18px;
+  margin-top:3px;
+  flex:0 0 auto;
+}
+
+/* IMPORTANT : forcer en block + line-height + marges */
+.checkline b{
+  display:block;
+  font-size:14px;
+  line-height:1.25;
+  margin:0;
+  white-space:normal;
+}
+
+.checkline small{
+  display:block;
+  margin-top:6px;
+  font-size:12px;
+  line-height:1.25;
+  color:#55607a;
+  white-space:normal;
+}
+
+/* petit boost en mode PDF */
+#pdfArea.pdf-mode .checkline b,
+#pdfArea.pdf-mode .checkline small{
+  line-height:1.3;
+}
+
 
     /* Signature trésorier (PDF only) */
     .pdfTreasurer{
