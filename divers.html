@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CD Tir 66 — Mission diverses (Remboursement)</title>
+
+  <!-- Libs PDF (ONLINE) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --txt:#0f1222;
+      --muted:#55607a;
+      --line:#e8ecf3;
+
+      /* divers */
+      --brand:#1aa66a;
+      --brand2:#2fcf8f;
+      --soft:#eafaf2;
+
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--txt);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+
+    /* Bandeau écran (non capturé dans le PDF) */
+    .hero{
+      background:linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#fff;border-radius:22px;padding:18px;
+      box-shadow:0 12px 30px rgba(17,24,39,.10);
+      display:flex;gap:16px;align-items:center;
+    }
+    .hero__logo{
+      width:86px;height:86px;border-radius:16px;
+      background:rgba(255,255,255,.22);
+      padding:10px;object-fit:contain;
+      box-shadow:0 10px 22px rgba(0,0,0,.18);
+      flex:0 0 auto;
+    }
+    .hero h1{margin:0;font-size:clamp(22px,3vw,34px);line-height:1.15}
+    .hero p{margin:6px 0 0;opacity:.92}
+    .pill{
+      display:inline-block;margin-top:10px;
+      background:rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.45);
+      padding:6px 12px;border-radius:999px;
+      font-weight:800;font-size:12px
+    }
+
+    /* Zone capturée PDF : 1 colonne (A4 friendly) */
+    #pdfArea{
+      margin-top:14px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:14px;
+      box-shadow:0 8px 22px rgba(0,0,0,.06);
+
+      max-width:760px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+
+    /* Entête PDF coloré (visible seulement en PDF) */
+    .pdfHeader{
+      display:none;
+      align-items:center;
+      gap:10px;
+      padding:10px 10px;
+      border-radius:14px;
+      background:linear-gradient(135deg, rgba(26,166,106,.92), rgba(47,207,143,.92));
+      color:#fff;
+    }
+    .pdfHeader img{
+      width:38px;height:38px;object-fit:contain;
+      background:rgba(255,255,255,.2);
+      border-radius:10px;
+      padding:6px;
+      flex:0 0 auto;
+    }
+    .pdfHeader__title{
+      font-size:14px;
+      font-weight:950;
+      line-height:1.15;
+    }
+    .pdfHeader__sub{
+      font-size:11.5px;
+      font-weight:750;
+      opacity:.95;
+      margin-top:2px;
+      line-height:1.2;
+    }
+
+    /* Sections */
+    .section{
+      border:1px solid #e6ebf4;
+      border-radius:18px;
+      padding:12px;
+      margin-top:10px;
+      background:#fff;
+    }
+    .section h2{
+      margin:0 0 10px;
+      font-size:15px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .badgeNum{
+      width:26px;height:26px;border-radius:9px;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-weight:950;
+      background:var(--soft);
+      border:1px solid #cfe6da;
+      color:#145;
+      flex:0 0 auto;
+      font-size:13px;
+    }
+
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:640px){.row{grid-template-columns:1fr}}
+
+    label{
+      display:block;
+      font-weight:850;
+      font-size:12.5px;
+      color:#334;
+      margin:8px 0 5px
+    }
+    .req{color:#d11;font-weight:950}
+
+    input, select{
+      width:100%;
+      border:1px solid #e2e7f0;
+      border-radius:12px;
+      padding:10px 11px;
+      font-size:14.5px;
+      outline:none;
+      background:#fff;
+    }
+    input:focus, select:focus{
+      border-color:rgba(26,166,106,.55);
+      box-shadow:0 0 0 4px rgba(26,166,106,.12);
+    }
+
+    .hint{margin-top:6px;color:#556;font-size:12.5px;line-height:1.25}
+
+    /* Totaux */
+    .totals{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .kpi{
+      border:1px solid rgba(26,166,106,.25);
+      background:linear-gradient(180deg, rgba(234,250,242,1), rgba(255,255,255,1));
+      border-radius:14px;
+      padding:9px 11px;
+    }
+    .kpi b{display:block;font-size:12px;color:#245;line-height:1.2}
+    .kpi span{display:block;margin-top:6px;font-size:19px;font-weight:950;line-height:1.1}
+
+  /* Case attestation : anti-chevauchement (PDF/html2canvas) */
+.checkline{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  margin-top:10px;
+  padding:10px 12px;
+  border:1px dashed #cfe6da;
+  border-radius:12px;
+  background:#fbfffd;
+}
+
+.checkline input{
+  width:18px;
+  height:18px;
+  margin-top:3px;
+  flex:0 0 auto;
+}
+
+/* IMPORTANT : forcer en block + line-height + marges */
+.checkline b{
+  display:block;
+  font-size:14px;
+  line-height:1.25;
+  margin:0;
+  white-space:normal;
+}
+
+.checkline small{
+  display:block;
+  margin-top:6px;
+  font-size:12px;
+  line-height:1.25;
+  color:#55607a;
+  white-space:normal;
+}
+
+/* petit boost en mode PDF */
+#pdfArea.pdf-mode .checkline b,
+#pdfArea.pdf-mode .checkline small{
+  line-height:1.3;
+}
+
+
+    /* Signature trésorier (PDF only) */
+    .pdfTreasurer{
+      display:none;
+      margin-top:10px;
+      padding-top:8px;
+      border-top:1px solid #e8ecf3;
+      color:#223;
+      font-size:12px;
+      line-height:1.25;
+    }
+    .pdfFooter__line{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:6px;
+      flex-wrap:wrap;
+    }
+    .pdfFooter__sig{
+      min-width:230px;
+      border:1px solid #e6ebf4;
+      border-radius:12px;
+      padding:9px 11px;
+      color:#445;
+      background:#fff;
+    }
+
+    /* Mode PDF */
+    #pdfArea.pdf-mode .pdfHeader{display:flex}
+    #pdfArea.pdf-mode .pdfTreasurer{display:block}
+
+    /* Boutons hors PDF */
+    .actions{
+      display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;
+      max-width:760px;margin-left:auto;margin-right:auto;
+    }
+    button{
+      border:0;border-radius:999px;
+      padding:12px 16px;
+      font-weight:950;font-size:15px;
+      cursor:pointer;
+    }
+    .btn-primary{background:#0d6efd;color:#fff}
+    .btn-light{background:#eef2ff;color:#111}
+    .btn-dark{background:#111827;color:#fff}
+
+    /* Impression */
+    @media print{
+      .hero, .actions{display:none !important}
+      body{background:#fff}
+      #pdfArea{box-shadow:none;border:0;margin-top:0}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <img class="hero__logo" src="logo-cdtir66.png" alt="Logo CD Tir 66">
+      <div>
+        <h1>Demande de remboursement — Mission divers</h1>
+        <p>PDF A4 (portrait) téléchargeable : KM, péages, hôtel, restaurant. </p>
+        <div class="pill">Comité Départemental de Tir — Pyrénées-Orientales (66)</div>
+      </div>
+    </header>
+
+    <!-- Zone capturée PDF -->
+    <div id="pdfArea">
+      <!-- Entête PDF coloré -->
+      <div class="pdfHeader">
+        <img src="logo-cdtir66.png" alt="Logo CD Tir 66">
+        <div>
+          <div class="pdfHeader__title">Demande de remboursement — Mission divers</div>
+          <div class="pdfHeader__sub">Comité Départemental de Tir — Pyrénées-Orientales (66)</div>
+        </div>
+      </div>
+
+      <!-- 1) Identité -->
+      <section class="section">
+        <h2><span class="badgeNum">1</span> Identité</h2>
+
+        <div class="row">
+          <div>
+            <label>Nom <span class="req">*</span></label>
+            <input id="nom" required>
+          </div>
+          <div>
+            <label>Prénom <span class="req">*</span></label>
+            <input id="prenom" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Club <span class="req">*</span></label>
+            <input id="club" required>
+          </div>
+          <div>
+            <label>N° licence</label>
+            <input id="licence">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Email <span class="req">*</span></label>
+            <input id="email" type="email" required>
+          </div>
+          <div>
+            <label>Téléphone</label>
+            <input id="tel">
+          </div>
+        </div>
+      </section>
+
+      <!-- 2) Mission -->
+      <section class="section">
+        <h2><span class="badgeNum">2</span> Mission</h2>
+
+        <label>Intitulé mission / compétition <span class="req">*</span></label>
+        <input id="intitule" placeholder="Ex : Championnat départemental 10 m" required>
+
+        <div class="row">
+          <div>
+            <label>Lieu <span class="req">*</span></label>
+            <input id="lieu" placeholder="Ville / Stand" required>
+          </div>
+          <div>
+            <label>Aller / retour</label>
+            <select id="ar">
+              <option value="Oui">Oui</option>
+              <option value="Non">Non</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Date début <span class="req">*</span></label>
+            <input id="d1" type="date" required>
+          </div>
+          <div>
+            <label>Date fin <span class="req">*</span></label>
+            <input id="d2" type="date" required>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3) Frais -->
+      <section class="section">
+        <h2><span class="badgeNum">3</span> Frais à rembourser</h2>
+
+        <div class="row">
+          <div>
+            <label>Distance totale (km)</label>
+            <input id="km" type="number" min="0" step="1" placeholder="Ex : 180">
+          </div>
+          <div>
+            <label>Taux kilométrique (€/km)</label>
+            <input id="taux" type="text" value="0,40" readonly>
+            <div class="hint">Taux fixé à 0,40 €/km.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Autoroute / péages (€)</label>
+            <input id="peage" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div>
+            <label>Hôtel (€)</label>
+            <input id="hotel" type="number" min="0" step="0.01" value="0">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Restaurant (€)</label>
+            <input id="resto" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div>
+            <label>Autres (optionnel) (€)</label>
+            <input id="autres" type="number" min="0" step="0.01" value="0">
+          </div>
+        </div>
+
+        <div class="totals">
+          <div class="kpi">
+            <b>Total KM (km × 0,40)</b>
+            <span id="totalKm">—</span>
+          </div>
+          <div class="kpi">
+            <b>Total général</b>
+            <span id="totalGen">0,00 €</span>
+          </div>
+        </div>
+
+        <div class="checkline">
+          <input id="atteste" type="checkbox">
+          <div>
+            <b>J’atteste sur l’honneur l’exactitude de mes déclarations.</b>
+            <small>(La signature du trésorier figure en bas du PDF.)</small>
+          </div>
+        </div>
+
+        <div class="hint">⚠️ Les justificatifs (factures, autoroute) ne sont pas intégrés automatiquement dans le PDF.</div>
+      </section>
+
+      <!-- Signature trésorier (PDF only) -->
+      <div id="pdfTreasurer" class="pdfTreasurer">
+        <b>Signature du trésorier</b>
+        <div id="faitaLine" style="margin-top:8px;margin-bottom:6px;font-size:12px;"></div>
+        <div class="pdfFooter__line">
+          <div class="pdfFooter__sig">Nom : ____________________<br>Date : ____ / ____ / ______</div>
+          <div class="pdfFooter__sig">Signature :</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions" id="actionsBar">
+      <button class="btn-primary" id="btnPdf">Télécharger le PDF</button>
+      <button class="btn-light" id="btnPrint">Imprimer</button>
+      <button class="btn-dark" id="btnReset" type="button">Réinitialiser</button>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const n = (v) => {
+      const x = Number(String(v ?? "").replace(",", "."));
+      return Number.isFinite(x) ? x : 0;
+    };
+    const eur = (x) =>
+      x.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+
+    const TAUX_KM = 0.40;
+    const FAIT_A = "Saint-Cyprien";
+
+    function calc(){
+      const km = n($("km").value);
+      const peage = n($("peage").value);
+      const hotel = n($("hotel").value);
+      const resto = n($("resto").value);
+      const autres = n($("autres").value);
+
+      const totalKm = (km > 0) ? km * TAUX_KM : 0;
+      $("totalKm").textContent = (km > 0) ? eur(totalKm) : "—";
+
+      const totalGen = totalKm + peage + hotel + resto + autres;
+      $("totalGen").textContent = eur(totalGen);
+    }
+    ["km","peage","hotel","resto","autres"].forEach(id => {
+      $(id).addEventListener("input", calc);
+    });
+    calc();
+
+    $("btnPrint").addEventListener("click", () => window.print());
+    $("btnReset").addEventListener("click", () => location.reload());
+
+    function safeName(s){
+      return String(s||"")
+        .trim()
+        .replace(/[^\p{L}\p{N}\- ]/gu,"")
+        .replace(/\s+/g,"_");
+    }
+
+    async function generatePdf(){
+      try{
+        if(!window.html2canvas) throw new Error("html2canvas non chargé");
+        if(!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF non chargé");
+
+        const required = ["nom","prenom","club","email","intitule","lieu","d1","d2"];
+        for(const id of required){
+          const el = $(id);
+          if(!el.value){
+            el.focus();
+            alert("Merci de compléter les champs obligatoires (*) avant de générer le PDF.");
+            return;
+          }
+        }
+
+        // Date du jour pour "Fait à"
+        const now = new Date();
+        const jj = String(now.getDate()).padStart(2,"0");
+        const mm = String(now.getMonth()+1).padStart(2,"0");
+        const aaaa = now.getFullYear();
+        $("faitaLine").textContent = `Fait à ${FAIT_A}, le ${jj}/${mm}/${aaaa}`;
+
+        const area = $("pdfArea");
+        const actions = $("actionsBar");
+
+        // Mode PDF
+        area.classList.add("pdf-mode");
+        const prevDisplay = actions.style.display;
+        actions.style.display = "none";
+
+        // petite pause pour que le DOM se mette à jour
+        await new Promise(r => setTimeout(r, 60));
+
+        const canvas = await html2canvas(area, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          scrollX: 0,
+          scrollY: -window.scrollY
+        });
+
+        // Restore
+        actions.style.display = prevDisplay || "flex";
+        area.classList.remove("pdf-mode");
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.92);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+
+        // marge haute réduite (header remonte)
+        const margin = 3;
+        const maxW = pageW - margin*2;
+        const maxH = pageH - margin*2;
+
+        let imgW = maxW;
+        let imgH = (canvas.height * imgW) / canvas.width;
+
+        // 1 page max : scale down si trop haut
+        if(imgH > maxH){
+          imgH = maxH;
+          imgW = (canvas.width * imgH) / canvas.height;
+        }
+
+        const x = (pageW - imgW) / 2;
+        const y = margin;
+
+        pdf.addImage(imgData, "JPEG", x, y, imgW, imgH);
+
+        const filename = `Remboursement divers_${safeName($("nom").value)}_${safeName($("prenom").value)}.pdf`;
+        pdf.save(filename);
+
+      }catch(err){
+        console.error(err);
+        alert("Erreur PDF : " + (err?.message || err));
+        $("pdfArea")?.classList.remove("pdf-mode");
+        if($("actionsBar")) $("actionsBar").style.display = "flex";
+      }
+    }
+
+    $("btnPdf").addEventListener("click", generatePdf);
+  </script>
+</body>
+</html>
