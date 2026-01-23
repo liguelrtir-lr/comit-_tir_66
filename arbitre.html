@@ -290,22 +290,82 @@
     $("btnReset").addEventListener("click", () => location.reload());
 
     async function generatePdf(){
-      // Check libs
-      if(!window.html2canvas || !window.jspdf){
-        alert("Librairies PDF non chargées (html2canvas / jsPDF). Vérifie ta connexion ou le CDN.");
-        return;
-      }
+  try{
+    if(!window.html2canvas) throw new Error("html2canvas non chargé");
+    if(!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF UMD non chargé");
 
-      // Validation minimale
-      const required = ["nom","prenom","club","email","intitule","lieu","d1","d2"];
-      for(const id of required){
-        const el = $(id);
-        if(!el.value){
-          el.focus();
-          alert("Merci de compléter les champs obligatoires (*) avant de générer le PDF.");
-          return;
-        }
+    const area = document.getElementById("pdfArea");
+    if(!area) throw new Error("#pdfArea introuvable");
+
+    // Capture nette
+    const canvas = await html2canvas(area, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: "#ffffff",
+      scrollX: 0,
+      scrollY: -window.scrollY
+    });
+
+    const imgData = canvas.toDataURL("image/jpeg", 0.92); // JPG souvent plus léger/clean
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pageW = pdf.internal.pageSize.getWidth();   // ~210
+    const pageH = pdf.internal.pageSize.getHeight();  // ~297
+    const margin = 10;
+
+    const usableW = pageW - margin*2;
+    const usableH = pageH - margin*2;
+
+    // Dimensions image dans le PDF (on fit en largeur)
+    const imgW = usableW;
+    const imgH = (canvas.height * imgW) / canvas.width;
+
+    // Si ça tient sur une page → simple
+    if(imgH <= usableH){
+      pdf.addImage(imgData, "JPEG", margin, margin, imgW, imgH);
+    } else {
+      // Multi-pages : on découpe proprement le canvas en tranches
+      const pxPerMm = canvas.width / imgW;              // pixels par mm (selon fit largeur)
+      const pagePxH = Math.floor(usableH * pxPerMm);    // hauteur en pixels par page
+
+      let y = 0;
+      let pageIndex = 0;
+
+      while (y < canvas.height){
+        const sliceH = Math.min(pagePxH, canvas.height - y);
+
+        const pageCanvas = document.createElement("canvas");
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = sliceH;
+
+        const ctx = pageCanvas.getContext("2d");
+        ctx.drawImage(canvas, 0, y, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+
+        const sliceData = pageCanvas.toDataURL("image/jpeg", 0.92);
+        const sliceH_mm = sliceH / pxPerMm;
+
+        if(pageIndex > 0) pdf.addPage();
+        pdf.addImage(sliceData, "JPEG", margin, margin, imgW, sliceH_mm);
+
+        y += sliceH;
+        pageIndex++;
       }
+    }
+
+    // Nom de fichier propre
+    const safe = (s) => String(s||"").trim().replace(/[^\p{L}\p{N}\- ]/gu,"").replace(/\s+/g,"_");
+    const nom = safe(document.getElementById("nom")?.value);
+    const prenom = safe(document.getElementById("prenom")?.value);
+    pdf.save(`Remboursement_Arbitre_${nom}_${prenom}.pdf`);
+
+  }catch(err){
+    console.error(err);
+    alert("Erreur PDF : " + (err?.message || err));
+  }
+}
 
       const area = $("pdfArea");
 
