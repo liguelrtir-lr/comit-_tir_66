@@ -365,20 +365,6 @@
 
         <div class="hr"></div>
 
-        <h2 style="margin-top:0">4) RIB</h2>
-        <label for="iban">IBAN <span class="req">*</span></label>
-        <input id="iban" required placeholder="FR..." />
-
-        <div class="row">
-          <div>
-            <label for="bic">BIC</label>
-            <input id="bic" placeholder="Ex : AGRIFRPP..." />
-          </div>
-          <div>
-            <label for="tit">Titulaire du compte</label>
-            <input id="tit" />
-          </div>
-        </div>
 
         <div class="actions">
           <button class="btn-primary" type="submit">Télécharger le PDF</button>
@@ -563,10 +549,6 @@
 
       y -= 58;
 
-      section("RIB");
-      line("Titulaire", data.tit || "—");
-      line("IBAN", data.iban);
-      line("BIC", data.bic || "—");
 
       page.drawText(`Généré le ${new Date().toLocaleDateString("fr-FR")}`, {
         x:left, y:18, size:9, font, color: rgb(0.45,0.45,0.52)
