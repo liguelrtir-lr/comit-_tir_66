@@ -257,180 +257,116 @@
 
   </div>
 
-  <script>
-    // Helpers
-    const $ = (id) => document.getElementById(id);
-    const n = (v) => {
-      const x = Number(String(v).replace(",", "."));
-      return Number.isFinite(x) ? x : 0;
-    };
-    const eur = (x) => x.toLocaleString("fr-FR", {minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+<script>
+  // Helpers
+  const $ = (id) => document.getElementById(id);
+  const n = (v) => {
+    const x = Number(String(v ?? "").replace(",", "."));
+    return Number.isFinite(x) ? x : 0;
+  };
+  const eur = (x) =>
+    x.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 
-    function calc(){
-      const km = n($("km").value);
-      const taux = n($("taux").value);
-      const peage = n($("peage").value);
-      const hotel = n($("hotel").value);
-      const resto = n($("resto").value);
-      const autres = n($("autres").value);
+  function calc(){
+    const km = n($("km").value);
+    const taux = n($("taux").value);
+    const peage = n($("peage").value);
+    const hotel = n($("hotel").value);
+    const resto = n($("resto").value);
+    const autres = n($("autres").value);
 
-      const totalKm = (km > 0 && taux > 0) ? km * taux : 0;
-      $("totalKm").textContent = (km > 0 && taux > 0) ? eur(totalKm) : "—";
+    const totalKm = (km > 0 && taux > 0) ? km * taux : 0;
+    $("totalKm").textContent = (km > 0 && taux > 0) ? eur(totalKm) : "—";
 
-      const totalGen = totalKm + peage + hotel + resto + autres;
-      $("totalGen").textContent = eur(totalGen);
-    }
-
-    ["km","taux","peage","hotel","resto","autres"].forEach(id=>{
-      $(id).addEventListener("input", calc);
-    });
-    calc();
-
-    $("btnPrint").addEventListener("click", () => window.print());
-    $("btnReset").addEventListener("click", () => location.reload());
-
-    async function generatePdf(){
-  try{
-    if(!window.html2canvas) throw new Error("html2canvas non chargé");
-    if(!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF UMD non chargé");
-
-    const area = document.getElementById("pdfArea");
-    if(!area) throw new Error("#pdfArea introuvable");
-
-    // Capture nette
-    const canvas = await html2canvas(area, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: false,
-      backgroundColor: "#ffffff",
-      scrollX: 0,
-      scrollY: -window.scrollY
-    });
-
-    const imgData = canvas.toDataURL("image/jpeg", 0.92); // JPG souvent plus léger/clean
-    const { jsPDF } = window.jspdf;
-
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    const pageW = pdf.internal.pageSize.getWidth();   // ~210
-    const pageH = pdf.internal.pageSize.getHeight();  // ~297
-    const margin = 10;
-
-    const usableW = pageW - margin*2;
-    const usableH = pageH - margin*2;
-
-    // Dimensions image dans le PDF (on fit en largeur)
-    const imgW = usableW;
-    const imgH = (canvas.height * imgW) / canvas.width;
-
-    // Si ça tient sur une page → simple
-    if(imgH <= usableH){
-      pdf.addImage(imgData, "JPEG", margin, margin, imgW, imgH);
-    } else {
-      // Multi-pages : on découpe proprement le canvas en tranches
-      const pxPerMm = canvas.width / imgW;              // pixels par mm (selon fit largeur)
-      const pagePxH = Math.floor(usableH * pxPerMm);    // hauteur en pixels par page
-
-      let y = 0;
-      let pageIndex = 0;
-
-      while (y < canvas.height){
-        const sliceH = Math.min(pagePxH, canvas.height - y);
-
-        const pageCanvas = document.createElement("canvas");
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = sliceH;
-
-        const ctx = pageCanvas.getContext("2d");
-        ctx.drawImage(canvas, 0, y, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
-
-        const sliceData = pageCanvas.toDataURL("image/jpeg", 0.92);
-        const sliceH_mm = sliceH / pxPerMm;
-
-        if(pageIndex > 0) pdf.addPage();
-        pdf.addImage(sliceData, "JPEG", margin, margin, imgW, sliceH_mm);
-
-        y += sliceH;
-        pageIndex++;
-      }
-    }
-
-    // Nom de fichier propre
-    const safe = (s) => String(s||"").trim().replace(/[^\p{L}\p{N}\- ]/gu,"").replace(/\s+/g,"_");
-    const nom = safe(document.getElementById("nom")?.value);
-    const prenom = safe(document.getElementById("prenom")?.value);
-    pdf.save(`Remboursement_Arbitre_${nom}_${prenom}.pdf`);
-
-  }catch(err){
-    console.error(err);
-    alert("Erreur PDF : " + (err?.message || err));
+    const totalGen = totalKm + peage + hotel + resto + autres;
+    $("totalGen").textContent = eur(totalGen);
   }
-}
+
+  ["km","taux","peage","hotel","resto","autres"].forEach(id => {
+    $(id).addEventListener("input", calc);
+  });
+  calc();
+
+  $("btnPrint").addEventListener("click", () => window.print());
+  $("btnReset").addEventListener("click", () => location.reload());
+
+  async function generatePdf(){
+    try{
+      if(!window.html2canvas) throw new Error("html2canvas non chargé");
+      if(!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF UMD non chargé");
 
       const area = $("pdfArea");
+      if(!area) throw new Error("#pdfArea introuvable");
 
-      // Render to canvas
       const canvas = await html2canvas(area, {
         scale: 2,
         useCORS: true,
-        backgroundColor: "#ffffff"
+        allowTaint: false,
+        backgroundColor: "#ffffff",
+        scrollX: 0,
+        scrollY: -window.scrollY
       });
 
-      const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/jpeg", 0.92);
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF("p", "mm", "a4");
 
       const pageW = pdf.internal.pageSize.getWidth();
       const pageH = pdf.internal.pageSize.getHeight();
+      const margin = 10;
 
-      // Fit image into A4
-      const imgW = pageW;
+      const usableW = pageW - margin*2;
+      const usableH = pageH - margin*2;
+
+      const imgW = usableW;
       const imgH = (canvas.height * imgW) / canvas.width;
 
-      let y = 10;
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(14);
-      pdf.text("Demande de remboursement — Mission Arbitre", 10, y);
-      y += 6;
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
-      pdf.text("Comité Départemental de Tir — Pyrénées-Orientales (66)", 10, y);
-
-      // Put form capture below header
-      const topMargin = 22;
-      const availableH = pageH - topMargin - 10;
-
-      if(imgH <= availableH){
-        pdf.addImage(imgData, "PNG", 10, topMargin, pageW-20, imgH * ((pageW-20)/imgW));
+      if(imgH <= usableH){
+        pdf.addImage(imgData, "JPEG", margin, margin, imgW, imgH);
       } else {
-        // Multi-page if needed
-        let imgY = 0;
-        const ratio = (pageW-20) / canvas.width;
-        const pageCanvasH = (availableH / ratio);
+        const pxPerMm = canvas.width / imgW;
+        const pagePxH = Math.floor(usableH * pxPerMm);
 
-        while(imgY < canvas.height){
+        let y = 0;
+        let pageIndex = 0;
+
+        while (y < canvas.height){
+          const sliceH = Math.min(pagePxH, canvas.height - y);
+
           const pageCanvas = document.createElement("canvas");
           pageCanvas.width = canvas.width;
-          pageCanvas.height = Math.min(pageCanvasH, canvas.height - imgY);
+          pageCanvas.height = sliceH;
 
           const ctx = pageCanvas.getContext("2d");
-          ctx.drawImage(canvas, 0, imgY, canvas.width, pageCanvas.height, 0, 0, canvas.width, pageCanvas.height);
+          ctx.drawImage(canvas, 0, y, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
 
-          const pageImg = pageCanvas.toDataURL("image/png");
-          pdf.addImage(pageImg, "PNG", 10, topMargin, pageW-20, pageCanvas.height * ratio);
+          const sliceData = pageCanvas.toDataURL("image/jpeg", 0.92);
+          const sliceH_mm = sliceH / pxPerMm;
 
-          imgY += pageCanvas.height;
-          if(imgY < canvas.height) pdf.addPage();
+          if(pageIndex > 0) pdf.addPage();
+          pdf.addImage(sliceData, "JPEG", margin, margin, imgW, sliceH_mm);
+
+          y += sliceH;
+          pageIndex++;
         }
       }
 
-      // Filename
-      const safe = (s) => String(s||"").trim().replace(/[^\p{L}\p{N}\- ]/gu,"").replace(/\s+/g,"_");
-      const filename = `Remboursement_Arbitre_${safe($("nom").value)}_${safe($("prenom").value)}.pdf`;
-      pdf.save(filename);
-    }
+      const safe = (s) => String(s||"")
+        .trim()
+        .replace(/[^\p{L}\p{N}\- ]/gu,"")
+        .replace(/\s+/g,"_");
 
-    $("btnPdf").addEventListener("click", generatePdf);
-  </script>
-</body>
+      const nom = safe($("nom").value);
+      const prenom = safe($("prenom").value);
+      pdf.save(`Remboursement_Arbitre_${nom}_${prenom}.pdf`);
+
+    }catch(err){
+      console.error(err);
+      alert("Erreur PDF : " + (err?.message || err));
+    }
+  }
+
+  $("btnPdf").addEventListener("click", generatePdf);
+</script>
+
 </html>
