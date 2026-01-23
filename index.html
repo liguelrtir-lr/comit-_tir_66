@@ -128,30 +128,37 @@
     .title{font-size:20px;margin:0 0 6px}
     .desc{margin:0;color:#555;line-height:1.35}
 
-    /* Variantes */
-    .card--comite::before{background:var(--c-comite)}
-    .card--comite .tag{
-      background:rgba(27,92,255,.10);
-      border-color:rgba(27,92,255,.22);
-      color:var(--c-comite);
-    }
-    .card--comite:hover{border-color:rgba(27,92,255,.35)}
+/* ===== Cartes pleines couleurs ===== */
 
-    .card--arbitres::before{background:var(--c-arbitres)}
-    .card--arbitres .tag{
-      background:rgba(26,166,106,.10);
-      border-color:rgba(26,166,106,.22);
-      color:var(--c-arbitres);
-    }
-    .card--arbitres:hover{border-color:rgba(26,166,106,.35)}
+.card--comite{
+  background: linear-gradient(180deg, #f0f5ff, #ffffff);
+  border-color: rgba(27,92,255,.35);
+}
+.card--comite:hover{
+  background: linear-gradient(180deg, #e6eeff, #ffffff);
+}
 
-    .card--divers::before{background:var(--c-divers)}
-    .card--divers .tag{
-      background:rgba(242,162,58,.12);
-      border-color:rgba(242,162,58,.28);
-      color:var(--c-divers);
-    }
-    .card--divers:hover{border-color:rgba(242,162,58,.40)}
+.card--arbitres{
+  background: linear-gradient(180deg, #ecfbf4, #ffffff);
+  border-color: rgba(26,166,106,.35);
+}
+.card--arbitres:hover{
+  background: linear-gradient(180deg, #e1f6ec, #ffffff);
+}
+
+.card--divers{
+  background: linear-gradient(180deg, #fff5ea, #ffffff);
+  border-color: rgba(242,162,58,.45);
+}
+.card--divers:hover{
+  background: linear-gradient(180deg, #ffedd8, #ffffff);
+}
+
+/* Barre couleur renforcée */
+.card--comite::before{ background: var(--c-comite); }
+.card--arbitres::before{ background: var(--c-arbitres); }
+.card--divers::before{ background: var(--c-divers); }
+
 
     .note{
       background:#fff;
