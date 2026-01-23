@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CD Tir 66 — Mission Arbitre (Remboursement)</title>
 
+  <!-- Libs PDF (ONLINE) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
   <style>
     :root{
       --bg:#f6f7fb;
@@ -28,7 +32,7 @@
     }
     .wrap{max-width:1100px;margin:0 auto;padding:18px}
 
-    /* Bandeau écran */
+    /* Bandeau écran (non capturé dans le PDF) */
     .hero{
       background:linear-gradient(135deg, var(--brand), var(--brand2));
       color:#fff;border-radius:22px;padding:18px;
@@ -58,10 +62,10 @@
       background:#fff;
       border:1px solid var(--line);
       border-radius:22px;
-      padding:14px; /* un peu plus compact */
+      padding:14px;
       box-shadow:0 8px 22px rgba(0,0,0,.06);
 
-      max-width:760px;     /* largeur confortable A4 */
+      max-width:760px;
       margin-left:auto;
       margin-right:auto;
     }
@@ -71,26 +75,37 @@
       display:none;
       align-items:center;
       gap:10px;
-      padding:10px 10px; /* plus compact */
+      padding:10px 10px;
       border-radius:14px;
       background:linear-gradient(135deg, rgba(26,166,106,.92), rgba(47,207,143,.92));
       color:#fff;
     }
     .pdfHeader img{
-      width:40px;height:40px;object-fit:contain;
+      width:38px;height:38px;object-fit:contain;
       background:rgba(255,255,255,.2);
       border-radius:10px;
       padding:6px;
+      flex:0 0 auto;
     }
-    .pdfHeader__title{font-size:14px;font-weight:950;line-height:1.15}
-    .pdfHeader__sub{font-size:11.5px;font-weight:750;opacity:.95;margin-top:2px}
+    .pdfHeader__title{
+      font-size:14px;
+      font-weight:950;
+      line-height:1.15;
+    }
+    .pdfHeader__sub{
+      font-size:11.5px;
+      font-weight:750;
+      opacity:.95;
+      margin-top:2px;
+      line-height:1.2;
+    }
 
     /* Sections */
     .section{
       border:1px solid #e6ebf4;
       border-radius:18px;
-      padding:12px;              /* compact */
-      margin-top:10px;           /* compact */
+      padding:12px;
+      margin-top:10px;
       background:#fff;
     }
     .section h2{
@@ -127,7 +142,7 @@
       width:100%;
       border:1px solid #e2e7f0;
       border-radius:12px;
-      padding:10px 11px;     /* compact */
+      padding:10px 11px;
       font-size:14.5px;
       outline:none;
       background:#fff;
@@ -139,7 +154,7 @@
 
     .hint{margin-top:6px;color:#556;font-size:12.5px;line-height:1.25}
 
-    /* Totaux (couleur légère) */
+    /* Totaux */
     .totals{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -152,23 +167,41 @@
       border-radius:14px;
       padding:9px 11px;
     }
-    .kpi b{display:block;font-size:12px;color:#245}
-    .kpi span{display:block;margin-top:6px;font-size:19px;font-weight:950}
+    .kpi b{display:block;font-size:12px;color:#245;line-height:1.2}
+    .kpi span{display:block;margin-top:6px;font-size:19px;font-weight:950;line-height:1.1}
 
-    /* Case attestation */
+    /* Case attestation (fix superposition PDF) */
     .checkline{
       display:flex;
-      gap:10px;
+      gap:12px;
       align-items:flex-start;
       margin-top:10px;
-      padding:9px 11px;
+      padding:10px 12px;
       border:1px dashed #cfe6da;
       border-radius:12px;
       background:#fbfffd;
     }
-    .checkline input{width:18px;height:18px;margin-top:2px}
-    .checkline b{display:block}
-    .checkline small{display:block;color:var(--muted);margin-top:2px;line-height:1.2}
+    .checkline input{
+      width:18px;height:18px;
+      margin-top:3px;
+      flex:0 0 auto;
+    }
+    .checkline b{
+      display:block;
+      font-weight:950;
+      font-size:13.5px;
+      line-height:1.25;
+      white-space:normal;
+      word-break:break-word;
+    }
+    .checkline small{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:12.5px;
+      line-height:1.25;
+      white-space:normal;
+    }
 
     /* Signature trésorier (PDF only) */
     .pdfTreasurer{
@@ -227,7 +260,7 @@
 <body>
   <div class="wrap">
     <header class="hero">
-      <img class="hero__logo" src="logo-cdtir66.png" alt="Logo CD Tir 66" crossorigin="anonymous">
+      <img class="hero__logo" src="logo-cdtir66.png" alt="Logo CD Tir 66">
       <div>
         <h1>Demande de remboursement — Mission Arbitre</h1>
         <p>PDF A4 (portrait) téléchargeable : KM, péages, hôtel, restaurant (sans indemnités journalières).</p>
@@ -239,7 +272,7 @@
     <div id="pdfArea">
       <!-- Entête PDF coloré -->
       <div class="pdfHeader">
-        <img src="logo-cdtir66.png" alt="Logo CD Tir 66" crossorigin="anonymous">
+        <img src="logo-cdtir66.png" alt="Logo CD Tir 66">
         <div>
           <div class="pdfHeader__title">Demande de remboursement — Mission Arbitre</div>
           <div class="pdfHeader__sub">Comité Départemental de Tir — Pyrénées-Orientales (66)</div>
@@ -284,7 +317,7 @@
         </div>
       </section>
 
-      <!-- 2) Mission (sans commentaires) -->
+      <!-- 2) Mission -->
       <section class="section">
         <h2><span class="badgeNum">2</span> Mission</h2>
 
@@ -328,9 +361,8 @@
           </div>
           <div>
             <label>Taux kilométrique (€/km)</label>
-            <!-- TAUX FIGÉ : lecture seule, valeur 0.40 -->
-            <input id="taux" type="number" value="0.40" readonly inputmode="decimal">
-            <div class="hint">Taux fixé à 0,40 €/km (modification désactivée).</div>
+            <input id="taux" type="text" value="0,40" readonly>
+            <div class="hint">Taux fixé à 0,40 €/km.</div>
           </div>
         </div>
 
@@ -358,7 +390,7 @@
 
         <div class="totals">
           <div class="kpi">
-            <b>Total KM (km × taux)</b>
+            <b>Total KM (km × 0,40)</b>
             <span id="totalKm">—</span>
           </div>
           <div class="kpi">
@@ -371,7 +403,7 @@
           <input id="atteste" type="checkbox">
           <div>
             <b>J’atteste sur l’honneur l’exactitude de mes déclarations.</b>
-            <small>Case informative (pas de footer “attestation” dans le PDF).</small>
+            <small>(La signature du trésorier figure en bas du PDF.)</small>
           </div>
         </div>
 
@@ -381,6 +413,7 @@
       <!-- Signature trésorier (PDF only) -->
       <div id="pdfTreasurer" class="pdfTreasurer">
         <b>Signature du trésorier</b>
+        <div id="faitaLine" style="margin-top:8px;margin-bottom:6px;font-size:12px;"></div>
         <div class="pdfFooter__line">
           <div class="pdfFooter__sig">Nom : ____________________<br>Date : ____ / ____ / ______</div>
           <div class="pdfFooter__sig">Signature :</div>
@@ -396,10 +429,6 @@
     </div>
   </div>
 
-  <!-- Libs PDF -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
   <script>
     const $ = (id) => document.getElementById(id);
     const n = (v) => {
@@ -409,19 +438,17 @@
     const eur = (x) =>
       x.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 
-    // "Fait à" automatique
-    // (Tu peux changer la ville ici si tu veux)
+    const TAUX_KM = 0.40;
     const FAIT_A = "Saint-Cyprien";
 
     function calc(){
       const km = n($("km").value);
-      const taux = n($("taux").value); // fixé à 0.40
       const peage = n($("peage").value);
       const hotel = n($("hotel").value);
       const resto = n($("resto").value);
       const autres = n($("autres").value);
 
-      const totalKm = (km > 0 && taux > 0) ? km * taux : 0;
+      const totalKm = (km > 0) ? km * TAUX_KM : 0;
       $("totalKm").textContent = (km > 0) ? eur(totalKm) : "—";
 
       const totalGen = totalKm + peage + hotel + resto + autres;
@@ -435,10 +462,17 @@
     $("btnPrint").addEventListener("click", () => window.print());
     $("btnReset").addEventListener("click", () => location.reload());
 
+    function safeName(s){
+      return String(s||"")
+        .trim()
+        .replace(/[^\p{L}\p{N}\- ]/gu,"")
+        .replace(/\s+/g,"_");
+    }
+
     async function generatePdf(){
       try{
         if(!window.html2canvas) throw new Error("html2canvas non chargé");
-        if(!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF UMD non chargé");
+        if(!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF non chargé");
 
         const required = ["nom","prenom","club","email","intitule","lieu","d1","d2"];
         for(const id of required){
@@ -450,47 +484,33 @@
           }
         }
 
-        // Ajoute "Fait à" + date du jour dans le bloc signature (PDF only)
+        // Date du jour pour "Fait à"
         const now = new Date();
         const jj = String(now.getDate()).padStart(2,"0");
         const mm = String(now.getMonth()+1).padStart(2,"0");
         const aaaa = now.getFullYear();
+        $("faitaLine").textContent = `Fait à ${FAIT_A}, le ${jj}/${mm}/${aaaa}`;
 
         const area = $("pdfArea");
-        const treas = $("pdfTreasurer");
-
-        // On injecte une ligne "Fait à" au-dessus si non présente
-        // (simple et robuste)
-        let placeLine = treas.querySelector(".faita");
-        if(!placeLine){
-          placeLine = document.createElement("div");
-          placeLine.className = "faita";
-          placeLine.style.marginTop = "8px";
-          placeLine.style.marginBottom = "6px";
-          placeLine.style.fontSize = "12px";
-          treas.insertBefore(placeLine, treas.children[1]); // après le titre
-        }
-        placeLine.textContent = `Fait à ${FAIT_A}, le ${jj}/${mm}/${aaaa}`;
-
-        // Mode PDF (affiche l’entête et la signature)
-        area.classList.add("pdf-mode");
-
-        // Masque les boutons
         const actions = $("actionsBar");
+
+        // Mode PDF
+        area.classList.add("pdf-mode");
         const prevDisplay = actions.style.display;
         actions.style.display = "none";
 
-        // Capture
+        // petite pause pour que le DOM se mette à jour
+        await new Promise(r => setTimeout(r, 60));
+
         const canvas = await html2canvas(area, {
           scale: 2,
           useCORS: true,
-          allowTaint: false,
           backgroundColor: "#ffffff",
           scrollX: 0,
           scrollY: -window.scrollY
         });
 
-        // Restore UI
+        // Restore
         actions.style.display = prevDisplay || "flex";
         area.classList.remove("pdf-mode");
 
@@ -501,40 +521,33 @@
         const pageW = pdf.internal.pageSize.getWidth();
         const pageH = pdf.internal.pageSize.getHeight();
 
-        // Marge PDF réduite pour remonter le header (c’était ta demande)
-        const margin = 4;
-
+        // marge haute réduite (header remonte)
+        const margin = 3;
         const maxW = pageW - margin*2;
         const maxH = pageH - margin*2;
 
         let imgW = maxW;
         let imgH = (canvas.height * imgW) / canvas.width;
 
-        // 1 page max : on ajuste pour tenir
+        // 1 page max : scale down si trop haut
         if(imgH > maxH){
           imgH = maxH;
           imgW = (canvas.width * imgH) / canvas.height;
         }
 
         const x = (pageW - imgW) / 2;
-        const y = margin; // remonte encore un peu
+        const y = margin;
 
         pdf.addImage(imgData, "JPEG", x, y, imgW, imgH);
 
-        const safe = (s) => String(s||"")
-          .trim()
-          .replace(/[^\p{L}\p{N}\- ]/gu,"")
-          .replace(/\s+/g,"_");
-
-        const nom = safe($("nom").value);
-        const prenom = safe($("prenom").value);
-        pdf.save(`Remboursement_Arbitre_${nom}_${prenom}.pdf`);
+        const filename = `Remboursement_Arbitre_${safeName($("nom").value)}_${safeName($("prenom").value)}.pdf`;
+        pdf.save(filename);
 
       }catch(err){
         console.error(err);
         alert("Erreur PDF : " + (err?.message || err));
         $("pdfArea")?.classList.remove("pdf-mode");
-        $("actionsBar") && ($("actionsBar").style.display = "flex");
+        if($("actionsBar")) $("actionsBar").style.display = "flex";
       }
     }
 
