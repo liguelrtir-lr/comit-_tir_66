@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mission Arbitre — Demande de remboursement</title>
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --txt:#111; --muted:#556;
+      --line:#e9ecf2; --accent:#1b5cff; --ok:#0a7a2f;
+      --r:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+    .wrap{max-width:980px;margin:0 auto;padding:22px}
+    header{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+    .badge{width:54px;height:54px;border-radius:14px;background:#e9eefc;display:flex;align-items:center;justify-content:center;
+      font-weight:800;color:#2041b8}
+    h1{margin:0;font-size:24px}
+    .sub{margin:4px 0 0;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.05)}
+    .card h2{margin:0 0 10px;font-size:16px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:640px){.row{grid-template-columns:1fr}}
+    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+    input, select, textarea{
+      width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:#fff;
+      font:inherit; outline:none;
+    }
+    input:focus, select:focus, textarea:focus{border-color:#b9c8ff; box-shadow:0 0 0 4px rgba(27,92,255,.12)}
+    textarea{min-height:90px; resize:vertical}
+    .help{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.3}
+    .totals{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:640px){.totals{grid-template-columns:1fr}}
+    .pill{border:1px dashed var(--line);border-radius:14px;padding:12px;background:#fbfcff}
+    .pill .k{font-size:12px;color:var(--muted)}
+    .pill .v{font-size:18px;font-weight:800;margin-top:4px}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+    button{
+      border:0; border-radius:14px; padding:10px 14px; font-weight:700; cursor:pointer;
+      background:var(--accent); color:#fff;
+    }
+    button.secondary{background:#111}
+    button.ghost{background:#fff;color:#111;border:1px solid var(--line)}
+    .note{font-size:12px;color:var(--muted)}
+    .ok{color:var(--ok);font-weight:700}
+    .req{color:#c00;font-weight:700}
+    .small{font-size:12px;color:var(--muted)}
+    .files{display:flex;gap:10px;flex-wrap:wrap}
+    .files input{padding:9px}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    .print-hint{font-size:12px;color:var(--muted);margin-top:8px}
+    @media print{
+      body{background:#fff}
+      .card{box-shadow:none}
+      .actions{display:none}
+      .print-hide{display:none}
+      input, select, textarea{border:1px solid #ddd}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="badge">AR</div>
+      <div>
+        <h1>Demande de remboursement — Mission Arbitre</h1>
+        <p class="sub">Sans rémunérations journalières — uniquement <strong>KM</strong>, <strong>péages</strong>, <strong>hôtel</strong>, <strong>restaurant</strong>.</p>
+      </div>
+    </header>
+
+    <form id="form" class="grid" novalidate>
+      <!-- IDENTITÉ -->
+      <section class="card">
+        <h2>1) Identité</h2>
+
+        <div class="row">
+          <div>
+            <label for="nom">Nom <span class="req">*</span></label>
+            <input id="nom" name="nom" autocomplete="family-name" required />
+          </div>
+          <div>
+            <label for="prenom">Prénom <span class="req">*</span></label>
+            <input id="prenom" name="prenom" autocomplete="given-name" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="club">Club <span class="req">*</span></label>
+            <input id="club" name="club" required />
+          </div>
+          <div>
+            <label for="licence">N° de licence</label>
+            <input id="licence" name="licence" inputmode="numeric" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="email">Email <span class="req">*</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div>
+            <label for="tel">Téléphone</label>
+            <input id="tel" name="tel" type="tel" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div class="help">Les champs marqués <span class="req">*</span> sont obligatoires.</div>
+      </section>
+
+      <!-- MISSION -->
+      <section class="card">
+        <h2>2) Mission</h2>
+
+        <label for="intitule">Intitulé de la mission / compétition <span class="req">*</span></label>
+        <input id="intitule" name="intitule" required placeholder="Ex : Championnat départemental 10 m" />
+
+        <div class="row">
+          <div>
+            <label for="lieu">Lieu <span class="req">*</span></label>
+            <input id="lieu" name="lieu" required placeholder="Ville / stand" />
+          </div>
+          <div>
+            <label for="allerretour">Aller-retour ?</label>
+            <select id="allerretour" name="allerretour">
+              <option value="Oui">Oui</option>
+              <option value="Non">Non</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="date_debut">Date début <span class="req">*</span></label>
+            <input id="date_debut" name="date_debut" type="date" required />
+          </div>
+          <div>
+            <label for="date_fin">Date fin <span class="req">*</span></label>
+            <input id="date_fin" name="date_fin" type="date" required />
+          </div>
+        </div>
+
+        <label for="commentaires">Commentaires (optionnel)</label>
+        <textarea id="commentaires" name="commentaires" placeholder="Informations utiles (horaires, covoiturage, etc.)"></textarea>
+      </section>
+
+      <!-- FRAIS -->
+      <section class="card">
+        <h2>3) Frais à rembourser</h2>
+
+        <div class="row">
+          <div>
+            <label for="km_total">Distance totale (km) <span class="req">*</span></label>
+            <input id="km_total" name="km_total" type="number" min="0" step="1" inputmode="numeric" required placeholder="Ex : 180" />
+            <div class="help">Indique le total des kilomètres effectués pour la mission.</div>
+          </div>
+          <div>
+            <label for="taux_km">Taux kilométrique (€/km)</label>
+            <input id="taux_km" name="taux_km" type="number" min="0" step="0.001" inputmode="decimal" placeholder="Laisse vide si non applicable" />
+            <div class="help">Si tu veux que le total KM soit calculé automatiquement, indique le taux.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="peage">Autoroute / péages (montant €)</label>
+            <input id="peage" name="peage" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" />
+          </div>
+          <div>
+            <label for="hotel">Hôtel (montant €)</label>
+            <input id="hotel" name="hotel" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="restaurant">Restaurant (montant €)</label>
+            <input id="restaurant" name="restaurant" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" />
+          </div>
+          <div>
+            <label for="autres">Autres (optionnel, montant €)</label>
+            <input id="autres" name="autres" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" />
+            <div class="help">Uniquement si validé (ex : parking). Sinon laisse à 0.</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="totals">
+          <div class="pill">
+            <div class="k">Total KM (si taux renseigné)</div>
+            <div class="v" id="totalKm">—</div>
+            <div class="small">Calcul : km × taux</div>
+          </div>
+          <div class="pill">
+            <div class="k">Total général estimé</div>
+            <div class="v" id="totalGeneral">0,00 €</div>
+            <div class="small">KM (si calculé) + péage + hôtel + restaurant + autres</div>
+          </div>
+        </div>
+
+        <p class="print-hint print-hide">Astuce : tu peux <strong>imprimer en PDF</strong> (Ctrl/Cmd + P) pour archiver la demande.</p>
+      </section>
+
+      <!-- JUSTIFICATIFS + RIB -->
+      <section class="card">
+        <h2>4) Pièces jointes & RIB</h2>
+
+        <label for="justifs">Justificatifs (péage / hôtel / restaurant)</label>
+        <input id="justifs" name="justifs" type="file" multiple accept=".pdf,.jpg,.jpeg,.png" />
+        <div class="help">Formats acceptés : PDF, JPG, PNG. (Selon ton hébergement, l’envoi réel des fichiers n’est pas automatique sans script serveur.)</div>
+
+        <div class="row">
+          <div>
+            <label for="iban">IBAN <span class="req">*</span></label>
+            <input id="iban" name="iban" required placeholder="FR76 ...." />
+          </div>
+          <div>
+            <label for="bic">BIC</label>
+            <input id="bic" name="bic" placeholder="Ex : AGRIFRPP..." />
+          </div>
+        </div>
+
+        <label for="titulaire">Titulaire du compte</label>
+        <input id="titulaire" name="titulaire" placeholder="Nom/Prénom du titulaire" />
+
+        <div class="hr"></div>
+
+        <div class="actions">
+          <button type="submit">Générer le récapitulatif</button>
+          <button class="ghost" type="button" id="btnPrint">Imprimer / PDF</button>
+          <button class="secondary" type="reset">Réinitialiser</button>
+          <span class="note" id="status"></span>
+        </div>
+      </section>
+    </form>
+
+    <!-- RÉCAP -->
+    <section class="card" id="recapCard" style="margin-top:12px; display:none;">
+      <h2>Récapitulatif</h2>
+      <div id="recap"></div>
+      <div class="help">Ce récapitulatif est généré localement dans ton navigateur. Pour un envoi email automatique, il faut ajouter un script (EmailJS ou serveur).</div>
+    </section>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const fields = {
+      km_total: $("km_total"),
+      taux_km: $("taux_km"),
+      peage: $("peage"),
+      hotel: $("hotel"),
+      restaurant: $("restaurant"),
+      autres: $("autres"),
+    };
+
+    function num(v){
+      const x = parseFloat(String(v ?? "").replace(",", "."));
+      return Number.isFinite(x) ? x : 0;
+    }
+
+    function eur(n){
+      return new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"}).format(n);
+    }
+
+    function recalc(){
+      const km = num(fields.km_total.value);
+      const taux = num(fields.taux_km.value);
+      const peage = num(fields.peage.value);
+      const hotel = num(fields.hotel.value);
+      const resto = num(fields.restaurant.value);
+      const autres = num(fields.autres.value);
+
+      const totalKm = (taux > 0 && km > 0) ? km * taux : null;
+      $("totalKm").textContent = (totalKm === null) ? "—" : eur(totalKm);
+
+      const totalGeneral = (totalKm ?? 0) + peage + hotel + resto + autres;
+      $("totalGeneral").textContent = eur(totalGeneral);
+    }
+
+    Object.values(fields).forEach(el => el.addEventListener("input", recalc));
+    recalc();
+
+    $("btnPrint").addEventListener("click", () => window.print());
+
+    $("form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+
+      // validation minimale HTML5
+      if(!form.checkValidity()){
+        $("status").textContent = "⚠️ Merci de compléter les champs obligatoires.";
+        $("status").className = "note";
+        form.reportValidity();
+        return;
+      }
+
+      $("status").textContent = "✅ Récapitulatif généré (tu peux imprimer en PDF).";
+      $("status").className = "note ok";
+
+      const val = (id) => (($(id).value || "").trim());
+      const km = num(fields.km_total.value);
+      const taux = num(fields.taux_km.value);
+      const totalKm = (taux > 0 && km > 0) ? km * taux : null;
+
+      const peage = num(fields.peage.value);
+      const hotel = num(fields.hotel.value);
+      const resto = num(fields.restaurant.value);
+      const autres = num(fields.autres.value);
+      const totalGeneral = (totalKm ?? 0) + peage + hotel + resto + autres;
+
+      const recapHtml = `
+        <div class="row">
+          <div>
+            <strong>Identité</strong><br/>
+            ${val("prenom")} ${val("nom")} — ${val("club")}<br/>
+            Licence : ${val("licence") || "—"}<br/>
+            Email : ${val("email")} — Tel : ${val("tel") || "—"}
+          </div>
+          <div>
+            <strong>Mission</strong><br/>
+            ${val("intitule")}<br/>
+            Lieu : ${val("lieu")} — Aller/retour : ${val("allerretour")}<br/>
+            Du ${val("date_debut")} au ${val("date_fin")}
+          </div>
+        </div>
+        <div class="hr"></div>
+        <strong>Frais</strong><br/>
+        Km total : ${km || 0} km ${taux > 0 ? `(taux ${taux} €/km → ${eur(totalKm)})` : `(taux non renseigné)`}<br/>
+        Péages : ${eur(peage)}<br/>
+        Hôtel : ${eur(hotel)}<br/>
+        Restaurant : ${eur(resto)}<br/>
+        Autres : ${eur(autres)}<br/>
+        <div class="hr"></div>
+        <strong>Total estimé : ${eur(totalGeneral)}</strong>
+        <div class="hr"></div>
+        <strong>RIB</strong><br/>
+        Titulaire : ${val("titulaire") || "—"}<br/>
+        IBAN : ${val("iban")}<br/>
+        BIC : ${val("bic") || "—"}
+        ${val("commentaires") ? `<div class="hr"></div><strong>Commentaires</strong><br/>${val("commentaires").replaceAll("\n","<br/>")}` : ""}
+      `;
+
+      $("recap").innerHTML = recapHtml;
+      $("recapCard").style.display = "block";
+      $("recapCard").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+  </script>
+</body>
+</html>
