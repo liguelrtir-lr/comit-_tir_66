@@ -8,7 +8,6 @@
   <style>
     :root{
       --bg:#f6f7fb;
-      --card:#ffffff;
       --txt:#111;
       --muted:#55607a;
       --line:#e8ecf3;
@@ -21,9 +20,10 @@
       --radius:18px;
     }
 
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box; }
+
     body{
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       margin:0;
       background:var(--bg);
       color:var(--txt);
@@ -42,16 +42,16 @@
       padding:18px;
       border-radius:var(--radius);
       color:#fff;
+      background:linear-gradient(135deg, rgba(27,92,255,1), rgba(0,194,255,1));
       box-shadow:0 12px 30px rgba(17,24,39,.10);
     }
-    .hero--comite{
-      background:linear-gradient(135deg, rgba(27,92,255,1), rgba(0,194,255,1));
-    }
+
     .hero__inner{
       display:flex;
       align-items:center;
       gap:16px;
     }
+
     .hero__logo{
       width:90px;
       height:90px;
@@ -62,19 +62,21 @@
       box-shadow:0 10px 22px rgba(0,0,0,.18);
       flex:0 0 auto;
     }
+
     .hero__text h1{
       margin:0;
       font-size:clamp(22px, 3vw, 34px);
       line-height:1.15;
     }
+
     .hero__text p{
       margin:6px 0 0;
       opacity:.92;
+      font-size:16px;
     }
 
     @media (max-width:520px){
-      .hero__inner{align-items:flex-start}
-      .hero__logo{width:56px;height:56px}
+      .hero__logo{ width:56px; height:56px; padding:8px; }
     }
 
     /* ===== Cartes ===== */
@@ -84,233 +86,88 @@
       gap:14px;
       margin-top:18px;
     }
+
     @media (max-width:860px){
-      .grid{grid-template-columns:1fr}
+      .grid{ grid-template-columns:1fr; }
     }
 
     a.card{
       display:block;
       padding:18px;
       border-radius:16px;
-      background:var(--card);
       text-decoration:none;
-      color:inherit;
-      box-shadow:0 8px 22px rgba(0,0,0,.06);
-      border:1px solid #eef0f6;
-      position:relative;
-      overflow:hidden;
-      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-    }
-    a.card:hover{
-      transform:translateY(-2px);
-      box-shadow:0 12px 28px rgba(0,0,0,.08);
-    }
-
-    /* barre couleur en haut */
-    a.card::before{
-      content:"";
-      position:absolute;
-      left:0; right:0; top:0;
-      height:6px;
-      background:#ddd;
-    }
-
-    .tag{
-      display:inline-block;
-      font-size:12px;
-      padding:5px 10px;
-      border-radius:999px;
-      margin-bottom:10px;
-      font-weight:700;
-      border:1px solid transparent;
-    }
-
-    .title{font-size:20px;margin:0 0 6px}
-    .desc{margin:0;color:#555;line-height:1.35}
-
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Comité Départemental de Tir 66 — Remboursements</title>
-
-  <style>
-    :root{
-      --bg:#f6f7fb;
-      --card:#ffffff;
-      --txt:#111;
-      --muted:#55607a;
-      --line:#e8ecf3;
-
-      /* Couleurs par type */
-      --c-comite:#1b5cff;   /* bleu */
-      --c-arbitres:#1aa66a; /* vert */
-      --c-divers:#f2a23a;   /* orange */
-
-      --radius:18px;
-    }
-
-    *{box-sizing:border-box}
-    body{
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      margin:0;
-      background:var(--bg);
-      color:var(--txt);
-    }
-
-    .wrap{
-      max-width:1100px;
-      margin:0 auto;
-      padding:0 18px 28px;
-    }
-
-    /* ===== Bandeau ===== */
-    .hero{
-      max-width:1100px;
-      margin:18px auto 14px;
-      padding:18px;
-      border-radius:var(--radius);
       color:#fff;
-      box-shadow:0 12px 30px rgba(17,24,39,.10);
-    }
-    .hero--comite{
-      background:linear-gradient(135deg, rgba(27,92,255,1), rgba(0,194,255,1));
-    }
-    .hero__inner{
-      display:flex;
-      align-items:center;
-      gap:16px;
-    }
-    .hero__logo{
-      width:90px;
-      height:90px;
-      object-fit:contain;
-      border-radius:14px;
-      background:rgba(255,255,255,.22);
-      padding:10px;
-      box-shadow:0 10px 22px rgba(0,0,0,.18);
-      flex:0 0 auto;
-    }
-    .hero__text h1{
-      margin:0;
-      font-size:clamp(22px, 3vw, 34px);
-      line-height:1.15;
-    }
-    .hero__text p{
-      margin:6px 0 0;
-      opacity:.92;
-    }
-
-    @media (max-width:520px){
-      .hero__inner{align-items:flex-start}
-      .hero__logo{width:56px;height:56px}
-    }
-
-    /* ===== Cartes ===== */
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:14px;
-      margin-top:18px;
-    }
-    @media (max-width:860px){
-      .grid{grid-template-columns:1fr}
-    }
-
-    a.card{
-      display:block;
-      padding:18px;
-      border-radius:16px;
-      background:var(--card);
-      text-decoration:none;
-      color:inherit;
-      box-shadow:0 8px 22px rgba(0,0,0,.06);
-      border:1px solid #eef0f6;
+      border:1px solid rgba(0,0,0,.04);
       position:relative;
       overflow:hidden;
-      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-    }
-    a.card:hover{
-      transform:translateY(-2px);
-      box-shadow:0 12px 28px rgba(0,0,0,.08);
+      box-shadow:0 8px 22px rgba(0,0,0,.06);
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+      min-height:150px;
     }
 
-    /* barre couleur en haut */
+    a.card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 16px 36px rgba(0,0,0,.18);
+      filter:saturate(1.05);
+    }
+
+    /* barre couleur en haut (petit détail pro) */
     a.card::before{
       content:"";
       position:absolute;
       left:0; right:0; top:0;
       height:6px;
-      background:#ddd;
+      background:rgba(255,255,255,.35);
     }
 
     .tag{
       display:inline-block;
       font-size:12px;
-      padding:5px 10px;
+      padding:6px 11px;
       border-radius:999px;
-      margin-bottom:10px;
-      font-weight:700;
-      border:1px solid transparent;
+      margin-bottom:12px;
+      font-weight:800;
+      background:rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.45);
+      color:#fff;
     }
 
-    .title{font-size:20px;margin:0 0 6px}
-    .desc{margin:0;color:#555;line-height:1.35}
+    .title{
+      font-size:22px;
+      margin:0 0 8px;
+      line-height:1.15;
+      color:#fff;
+    }
 
-/* ===== Cartes pleines couleurs ===== */
+    .desc{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      line-height:1.35;
+      font-size:16px;
+      max-width:52ch;
+    }
 
-.card--comite{
-  background: linear-gradient(135deg, #1b5cff, #3f7cff);
-  color:#fff;
-}
-.card--arbitres{
-  background: linear-gradient(135deg, #1aa66a, #2fcf8f);
-  color:#fff;
-}
-.card--divers{
-  background: linear-gradient(135deg, #f2a23a, #ffbe63);
-  color:#fff;
-}
+    /* Couleurs de fond des cartes */
+    a.card.card--comite{
+      background:linear-gradient(135deg, #1b5cff, #3f7cff);
+    }
+    a.card.card--arbitres{
+      background:linear-gradient(135deg, #1aa66a, #2fcf8f);
+    }
+    a.card.card--divers{
+      background:linear-gradient(135deg, #f2a23a, #ffbe63);
+    }
 
-/* Texte */
-.card--comite .desc,
-.card--arbitres .desc,
-.card--divers .desc{
-  color:rgba(255,255,255,.9);
-}
-
-/* Tag inversé */
-.card--comite .tag,
-.card--arbitres .tag,
-.card--divers .tag{
-  background:rgba(255,255,255,.25);
-  color:#fff;
-  border-color:rgba(255,255,255,.45);
-}
-
-/* Hover */
-.card--comite:hover,
-.card--arbitres:hover,
-.card--divers:hover{
-  transform:translateY(-4px);
-  box-shadow:0 16px 36px rgba(0,0,0,.18);
-}
-
-
-/* Barre couleur renforcée */
-.card--comite::before{ background: var(--c-comite); }
-.card--arbitres::before{ background: var(--c-arbitres); }
-.card--divers::before{ background: var(--c-divers); }
-
-
+    /* ===== Note & footer ===== */
     .note{
       background:#fff;
       border:1px dashed #d6d9e6;
       border-radius:14px;
       padding:12px;
       margin-top:16px;
+      color:#111;
     }
+
     footer{
       margin-top:22px;
       color:#666;
@@ -321,9 +178,9 @@
 
 <body>
 
-  <!-- Bandeau -->
-  <header class="hero hero--comite">
+  <header class="hero">
     <div class="hero__inner">
+      <!-- Mets bien le fichier logo-cdtir66.png à la racine du repo, à côté de index.html -->
       <img class="hero__logo" src="logo-cdtir66.png" alt="Logo CD Tir 66">
       <div class="hero__text">
         <h1>Demandes de remboursement — frais de mission</h1>
@@ -337,83 +194,19 @@
     <div class="grid">
       <a class="card card--comite" href="comite.html">
         <div class="tag">Comité</div>
-        <h2 class="title">Remboursement – Comité</h2>
+        <h2 class="title">Remboursement — Comité</h2>
         <p class="desc">Pour les membres du comité départemental : déplacements, repas, hébergement, justificatifs.</p>
       </a>
 
       <a class="card card--arbitres" href="arbitre.html">
         <div class="tag">Arbitres</div>
-        <h2 class="title">Remboursement – Arbitres</h2>
+        <h2 class="title">Remboursement — Arbitres</h2>
         <p class="desc">Pour les arbitres : mission, kilomètres, péages, hôtel, restaurant, RIB.</p>
       </a>
 
       <a class="card card--divers" href="divers.html">
         <div class="tag">Divers</div>
-        <h2 class="title">Remboursement – Divers</h2>
-        <p class="desc">Autres missions / cas particuliers (formations, achats, représentation, etc.).</p>
-      </a>
-    </div>
-
-    <div class="note">
-      <strong>Astuce :</strong> prépare tes justificatifs (photo PDF/JPG) avant d’ouvrir le formulaire.
-    </div>
-
-    <footer>
-      © Comité Départemental de Tir 66 — Version web (GitHub Pages)
-    </footer>
-
-  </div>
-
-</body>
-</html>
-
-
-    .note{
-      background:#fff;
-      border:1px dashed #d6d9e6;
-      border-radius:14px;
-      padding:12px;
-      margin-top:16px;
-    }
-    footer{
-      margin-top:22px;
-      color:#666;
-      font-size:13px;
-    }
-  </style>
-</head>
-
-<body>
-
-  <!-- Bandeau -->
-  <header class="hero hero--comite">
-    <div class="hero__inner">
-      <img class="hero__logo" src="logo-cdtir66.png" alt="Logo CD Tir 66">
-      <div class="hero__text">
-        <h1>Demandes de remboursement — frais de mission</h1>
-        <p>Choisis le bon formulaire selon ta mission.</p>
-      </div>
-    </div>
-  </header>
-
-  <div class="wrap">
-
-    <div class="grid">
-      <a class="card card--comite" href="comite.html">
-        <div class="tag">Comité</div>
-        <h2 class="title">Remboursement – Comité</h2>
-        <p class="desc">Pour les membres du comité départemental : déplacements, repas, hébergement, justificatifs.</p>
-      </a>
-
-      <a class="card card--arbitres" href="arbitre.html">
-        <div class="tag">Arbitres</div>
-        <h2 class="title">Remboursement – Arbitres</h2>
-        <p class="desc">Pour les arbitres : mission, kilomètres, péages, hôtel, restaurant, RIB.</p>
-      </a>
-
-      <a class="card card--divers" href="divers.html">
-        <div class="tag">Divers</div>
-        <h2 class="title">Remboursement – Divers</h2>
+        <h2 class="title">Remboursement — Divers</h2>
         <p class="desc">Autres missions / cas particuliers (formations, achats, représentation, etc.).</p>
       </a>
     </div>
