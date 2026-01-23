@@ -3,67 +3,385 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Comité Départemental de Tir 66 — Remboursements</title>
+  <title>Mission Arbitre — Remboursement</title>
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f6f7fb;color:#111}
-    .wrap{max-width:920px;margin:0 auto;padding:28px}
-    header{display:flex;gap:16px;align-items:center;margin-bottom:18px}
-    .logo{width:56px;height:56px;border-radius:14px;background:#e9ecf7;display:flex;align-items:center;justify-content:center;font-weight:700}
-    h1{font-size:26px;margin:0}
-    p{margin:6px 0 0;color:#444}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+    .wrap{max-width:980px;margin:0 auto;padding:22px}
+    .card{background:#fff;border:1px solid #e9ecf2;border-radius:16px;padding:16px;box-shadow:0 10px 22px rgba(0,0,0,.05)}
+    h1{margin:0 0 6px;font-size:22px}
+    .sub{margin:0 0 12px;color:#556}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     @media (max-width:860px){.grid{grid-template-columns:1fr}}
-    a.card{display:block;padding:18px;border-radius:16px;background:#fff;text-decoration:none;color:inherit;box-shadow:0 8px 22px rgba(0,0,0,.06);border:1px solid #eef0f6}
-    a.card:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(0,0,0,.08)}
-    .tag{display:inline-block;font-size:12px;padding:4px 10px;border-radius:999px;margin-bottom:10px}
-    .c{background:#e7f0ff}
-    .a{background:#e9fff3}
-    .d{background:#fff3e6}
-    .title{font-size:18px;margin:0 0 6px}
-    .desc{margin:0;color:#555;line-height:1.35}
-    footer{margin-top:22px;color:#666;font-size:13px}
-    .note{background:#fff;border:1px dashed #d6d9e6;border-radius:14px;padding:12px;margin-top:16px}
+    label{display:block;font-size:13px;color:#556;margin:10px 0 6px}
+    input,select,textarea{width:100%;padding:10px 12px;border:1px solid #e9ecf2;border-radius:12px;font:inherit}
+    textarea{min-height:90px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:640px){.row{grid-template-columns:1fr}}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center}
+    button{border:0;border-radius:14px;padding:10px 14px;font-weight:800;cursor:pointer;background:#1b5cff;color:#fff}
+    button.ghost{background:#fff;color:#111;border:1px solid #e9ecf2}
+    .note{font-size:12px;color:#556}
+    .pill{border:1px dashed #e9ecf2;border-radius:14px;background:#fbfcff;padding:12px}
+    .pill .k{font-size:12px;color:#556}
+    .pill .v{font-size:18px;font-weight:900;margin-top:4px}
+    .totals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    @media (max-width:640px){.totals{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="logo">CD</div>
-      <div>
-        <h1>Demandes de remboursement — frais de mission</h1>
-        <p>Choisis le bon formulaire selon ta mission.</p>
-      </div>
-    </header>
+    <div class="card">
+      <h1>Demande de remboursement — Mission Arbitre</h1>
+      <p class="sub">Génère un PDF A4 téléchargeable (KM + péages + hôtel + restaurant). Aucune rémunération journalière.</p>
 
-    <div class="grid">
-      <a class="card" href="LIEN_FORM_COMITE" target="_blank" rel="noopener">
-        <div class="tag c">Comité</div>
-        <h2 class="title">Remboursement — Comité</h2>
-        <p class="desc">Pour les membres du comité départemental : déplacements, repas, hébergement, justificatifs.</p>
-      </a>
+      <form id="f" class="grid" novalidate>
+        <section>
+          <h3 style="margin:0 0 8px">Identité</h3>
 
-      <a class="card" href="LIEN_FORM_ARBITRE" target="_blank" rel="noopener">
-        <div class="tag a">Arbitres</div>
-        <h2 class="title">Remboursement — Arbitres</h2>
-        <p class="desc">Pour les arbitres : mission, kilomètres, péages, justificatifs, coordonnées bancaires.</p>
-      </a>
+          <div class="row">
+            <div>
+              <label>Nom *</label>
+              <input id="nom" required />
+            </div>
+            <div>
+              <label>Prénom *</label>
+              <input id="prenom" required />
+            </div>
+          </div>
 
-      <a class="card" href="LIEN_FORM_DIVERS" target="_blank" rel="noopener">
-        <div class="tag d">Divers</div>
-        <h2 class="title">Remboursement — Divers</h2>
-        <p class="desc">Autres missions / cas particuliers (formations, achats, représentation, etc.).</p>
-      </a>
+          <div class="row">
+            <div>
+              <label>Club *</label>
+              <input id="club" required />
+            </div>
+            <div>
+              <label>N° licence</label>
+              <input id="licence" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Email *</label>
+              <input id="email" type="email" required />
+            </div>
+            <div>
+              <label>Téléphone</label>
+              <input id="tel" />
+            </div>
+          </div>
+
+          <h3 style="margin:14px 0 8px">Mission</h3>
+
+          <label>Intitulé mission / compétition *</label>
+          <input id="mission" required placeholder="Ex : Championnat départemental 10m" />
+
+          <div class="row">
+            <div>
+              <label>Lieu *</label>
+              <input id="lieu" required placeholder="Ville / Stand" />
+            </div>
+            <div>
+              <label>Aller/retour</label>
+              <select id="ar">
+                <option>Oui</option>
+                <option>Non</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Date début *</label>
+              <input id="d1" type="date" required />
+            </div>
+            <div>
+              <label>Date fin *</label>
+              <input id="d2" type="date" required />
+            </div>
+          </div>
+
+          <label>Commentaires</label>
+          <textarea id="com"></textarea>
+        </section>
+
+        <section>
+          <h3 style="margin:0 0 8px">Frais</h3>
+
+          <div class="row">
+            <div>
+              <label>Distance totale (km) *</label>
+              <input id="km" type="number" min="0" step="1" required />
+            </div>
+            <div>
+              <label>Taux kilométrique (€/km)</label>
+              <input id="taux" type="number" min="0" step="0.001" placeholder="Ex : 0.321" />
+              <div class="note">Si renseigné, le total KM est calculé automatiquement.</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Péages / autoroute (€)</label>
+              <input id="peage" type="number" min="0" step="0.01" value="0" />
+            </div>
+            <div>
+              <label>Hôtel (€)</label>
+              <input id="hotel" type="number" min="0" step="0.01" value="0" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Restaurant (€)</label>
+              <input id="resto" type="number" min="0" step="0.01" value="0" />
+            </div>
+            <div>
+              <label>Autres (optionnel) (€)</label>
+              <input id="autres" type="number" min="0" step="0.01" value="0" />
+            </div>
+          </div>
+
+          <div class="totals">
+            <div class="pill">
+              <div class="k">Total KM</div>
+              <div class="v" id="tKm">—</div>
+            </div>
+            <div class="pill">
+              <div class="k">Total général</div>
+              <div class="v" id="tGen">0,00 €</div>
+            </div>
+          </div>
+
+          <h3 style="margin:14px 0 8px">RIB</h3>
+          <label>IBAN *</label>
+          <input id="iban" required placeholder="FR..." />
+          <div class="row">
+            <div>
+              <label>BIC</label>
+              <input id="bic" />
+            </div>
+            <div>
+              <label>Titulaire</label>
+              <input id="tit" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit">Télécharger le PDF</button>
+            <button class="ghost" type="reset">Réinitialiser</button>
+            <span class="note" id="status"></span>
+          </div>
+
+          <div class="note" style="margin-top:8px">
+            ⚠️ Les justificatifs (photos/pdf) ne peuvent pas être “embarqués” dans le PDF sans traitement spécifique.
+            On peut ajouter une page “Liste des justificatifs” si tu veux.
+          </div>
+        </section>
+      </form>
     </div>
-
-    <div class="note">
-      <strong>Astuce :</strong> prépare tes justificatifs (photo PDF/JPG) avant d’ouvrir le formulaire.
-    </div>
-
-    <footer>
-      © Comité Départemental de Tir 66 — Version web (GitHub Pages)
-    </footer>
   </div>
+
+  <!-- PDF-LIB (client-side) -->
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const eur = (n) => new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"}).format(n || 0);
+    const num = (v) => {
+      const x = parseFloat(String(v ?? "").replace(",", "."));
+      return Number.isFinite(x) ? x : 0;
+    };
+
+    function recalc(){
+      const km = num($("km").value);
+      const taux = num($("taux").value);
+      const peage = num($("peage").value);
+      const hotel = num($("hotel").value);
+      const resto = num($("resto").value);
+      const autres = num($("autres").value);
+
+      const totalKm = (km > 0 && taux > 0) ? km * taux : null;
+      $("tKm").textContent = totalKm === null ? "—" : eur(totalKm);
+
+      const totalGen = (totalKm ?? 0) + peage + hotel + resto + autres;
+      $("tGen").textContent = eur(totalGen);
+    }
+
+    ["km","taux","peage","hotel","resto","autres"].forEach(id => $(id).addEventListener("input", recalc));
+    recalc();
+
+    async function makePdf(data){
+      const { PDFDocument, StandardFonts, rgb } = PDFLib;
+
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage([595.28, 841.89]); // A4 portrait
+      const { width, height } = page.getSize();
+
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+      // Header bandeau (bleu arbitre)
+      page.drawRectangle({ x: 0, y: height-78, width, height: 78, color: rgb(0.11, 0.36, 1) });
+      page.drawText("DEMANDE DE REMBOURSEMENT — MISSION ARBITRE", {
+        x: 22, y: height-48, size: 16, font: bold, color: rgb(1,1,1)
+      });
+
+      const left = 22;
+      let y = height - 100;
+
+      const line = (label, value) => {
+        page.drawText(label, { x: left, y, size: 10, font: bold, color: rgb(0.1,0.1,0.1) });
+        page.drawText(String(value ?? ""), { x: left+160, y, size: 10, font, color: rgb(0.1,0.1,0.1) });
+        y -= 16;
+      };
+
+      const section = (title) => {
+        y -= 6;
+        page.drawText(title, { x: left, y, size: 12, font: bold, color: rgb(0.1,0.1,0.1) });
+        y -= 14;
+        page.drawLine({ start:{x:left,y}, end:{x:width-left,y}, thickness: 1, color: rgb(0.9,0.9,0.95) });
+        y -= 14;
+      };
+
+      section("Identité");
+      line("Nom / Prénom", `${data.prenom} ${data.nom}`);
+      line("Club", data.club);
+      line("Licence", data.licence || "—");
+      line("Email", data.email);
+      line("Téléphone", data.tel || "—");
+
+      section("Mission");
+      line("Intitulé", data.mission);
+      line("Lieu", data.lieu);
+      line("Aller/retour", data.ar);
+      line("Dates", `Du ${data.d1} au ${data.d2}`);
+
+      if (data.com) {
+        // commentaires multi-ligne
+        page.drawText("Commentaires", { x: left, y, size: 10, font: bold, color: rgb(0.1,0.1,0.1) });
+        y -= 14;
+        const maxWidth = width - 2*left;
+        const text = data.com.replace(/\r/g,"");
+        const words = text.split(/\s+/);
+        let lineText = "";
+        const lines = [];
+        for (const w of words){
+          const test = (lineText ? lineText + " " : "") + w;
+          const wWidth = font.widthOfTextAtSize(test, 10);
+          if (wWidth > maxWidth) { lines.push(lineText); lineText = w; }
+          else lineText = test;
+        }
+        if (lineText) lines.push(lineText);
+        for (const l of lines.slice(0, 6)){
+          page.drawText(l, { x: left, y, size: 10, font, color: rgb(0.1,0.1,0.1) });
+          y -= 14;
+        }
+        y -= 6;
+      }
+
+      section("Frais (sans rémunérations journalières)");
+      line("Kilomètres", `${data.km} km`);
+      line("Taux", data.taux > 0 ? `${data.taux} €/km` : "—");
+      line("Total KM", data.totalKmTxt);
+      line("Péages", data.peageTxt);
+      line("Hôtel", data.hotelTxt);
+      line("Restaurant", data.restoTxt);
+      line("Autres", data.autresTxt);
+
+      y -= 6;
+      page.drawRectangle({ x: left, y: y-34, width: width-2*left, height: 34, borderColor: rgb(0.8,0.85,0.95), borderWidth: 1, color: rgb(0.97,0.98,1) });
+      page.drawText("TOTAL GÉNÉRAL", { x: left+10, y: y-22, size: 11, font: bold, color: rgb(0.1,0.1,0.1) });
+      page.drawText(data.totalGenTxt, { x: width-left-140, y: y-22, size: 11, font: bold, color: rgb(0.1,0.1,0.1) });
+
+      y -= 56;
+
+      section("RIB");
+      line("Titulaire", data.tit || "—");
+      line("IBAN", data.iban);
+      line("BIC", data.bic || "—");
+
+      // Footer
+      page.drawText(`Généré le ${new Date().toLocaleDateString("fr-FR")}`, {
+        x: left, y: 18, size: 9, font, color: rgb(0.45,0.45,0.5)
+      });
+
+      const bytes = await pdfDoc.save();
+      return bytes;
+    }
+
+    function download(bytes, filename){
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    $("f").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      $("status").textContent = "";
+
+      const form = e.currentTarget;
+      if(!form.checkValidity()){
+        $("status").textContent = "⚠️ Complète les champs obligatoires.";
+        form.reportValidity();
+        return;
+      }
+
+      // Calculs
+      const km = num($("km").value);
+      const taux = num($("taux").value);
+      const peage = num($("peage").value);
+      const hotel = num($("hotel").value);
+      const resto = num($("resto").value);
+      const autres = num($("autres").value);
+
+      const totalKm = (km>0 && taux>0) ? km*taux : 0;
+      const totalGen = totalKm + peage + hotel + resto + autres;
+
+      const data = {
+        nom: $("nom").value.trim(),
+        prenom: $("prenom").value.trim(),
+        club: $("club").value.trim(),
+        licence: $("licence").value.trim(),
+        email: $("email").value.trim(),
+        tel: $("tel").value.trim(),
+        mission: $("mission").value.trim(),
+        lieu: $("lieu").value.trim(),
+        ar: $("ar").value,
+        d1: $("d1").value,
+        d2: $("d2").value,
+        com: $("com").value.trim(),
+        km: km,
+        taux: taux,
+        totalKmTxt: (taux>0 && km>0) ? eur(totalKm) : "—",
+        peageTxt: eur(peage),
+        hotelTxt: eur(hotel),
+        restoTxt: eur(resto),
+        autresTxt: eur(autres),
+        totalGenTxt: eur(totalGen),
+        iban: $("iban").value.trim(),
+        bic: $("bic").value.trim(),
+        tit: $("tit").value.trim()
+      };
+
+      $("status").textContent = "Génération du PDF...";
+      try{
+        const bytes = await makePdf(data);
+        const safe = (s) => s.replace(/[^\w\-]+/g,"_");
+        const filename = `Remboursement_Arbitre_${safe(data.nom)}_${safe(data.prenom)}_${data.d1 || ""}.pdf`;
+        download(bytes, filename);
+        $("status").textContent = "✅ PDF téléchargé.";
+      }catch(err){
+        console.error(err);
+        $("status").textContent = "❌ Erreur PDF (voir console).";
+      }
+    });
+  </script>
 </body>
 </html>
-
-
