@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CD Tir 66 — Mission diverses (Remboursement)</title>
+  <title>CD Tir 66 — Mission Divers (Remboursement)</title>
 
   <!-- Libs PDF (ONLINE) -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -16,228 +16,373 @@
       --muted:#55607a;
       --line:#e8ecf3;
 
-      /* divers */
-       --brand:#f2a23a;
-       --brand2:#ffbe63;
-       --soft:#fff2e3;
+      /* Divers - Couleurs oranges identiques */
+      --brand:#f2a23a;
+      --brand2:#ffbe63;
+      --soft:#fff2e3;
 
+      --shadow: 0 10px 30px rgba(16,24,40,.08);
+      --shadow-lg: 0 20px 50px rgba(242,162,58,.15);
       --radius:18px;
+      --radius2:22px;
     }
+    
     *{box-sizing:border-box}
+    
     body{
       margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
       color:var(--txt);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+
+    @keyframes slideUp{
+      from { opacity:0; transform: translateY(20px); }
+      to { opacity:1; transform: translateY(0); }
+    }
+    @keyframes fadeIn{
+      from { opacity:0; }
+      to { opacity:1; }
+    }
+    @keyframes pulse{
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:32px auto;
+      padding:0 20px;
+      animation: slideUp 0.6s ease-out;
+    }
 
     /* Bandeau écran (non capturé dans le PDF) */
     .hero{
       background:linear-gradient(135deg, var(--brand), var(--brand2));
-      color:#fff;border-radius:22px;padding:18px;
-      box-shadow:0 12px 30px rgba(17,24,39,.10);
-      display:flex;gap:16px;align-items:center;
+      color:#fff;
+      border-radius:var(--radius2);
+      padding:24px 28px;
+      box-shadow:var(--shadow-lg);
+      display:flex;
+      gap:20px;
+      align-items:center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before{
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 80%, rgba(255,255,255,.15) 0%, transparent 50%);
+      pointer-events: none;
     }
     .hero__logo{
-      width:86px;height:86px;border-radius:16px;
-      background:rgba(255,255,255,.22);
-      padding:10px;object-fit:contain;
-      box-shadow:0 10px 22px rgba(0,0,0,.18);
+      width:90px;
+      height:90px;
+      border-radius:18px;
+      background:rgba(255,255,255,.25);
+      padding:12px;
+      object-fit:contain;
+      box-shadow:0 12px 28px rgba(0,0,0,.2);
       flex:0 0 auto;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(10px);
     }
-    .hero h1{margin:0;font-size:clamp(22px,3vw,34px);line-height:1.15}
-    .hero p{margin:6px 0 0;opacity:.92}
+    .hero h1{
+      margin:0;
+      font-size:clamp(22px,3vw,34px);
+      font-weight: 800;
+      line-height:1.2;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.3px;
+    }
+    .hero p{
+      margin:8px 0 0;
+      opacity:.92;
+      font-size: 15px;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+      line-height: 1.4;
+    }
     .pill{
-      display:inline-block;margin-top:10px;
+      display:inline-block;
+      margin-top:12px;
       background:rgba(255,255,255,.22);
-      border:1px solid rgba(255,255,255,.45);
-      padding:6px 12px;border-radius:999px;
-      font-weight:800;font-size:12px
+      border:1.5px solid rgba(255,255,255,.35);
+      padding:8px 14px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:13px;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(10px);
     }
 
     /* Zone capturée PDF : 1 colonne (A4 friendly) */
     #pdfArea{
-      margin-top:14px;
+      margin-top:20px;
       background:#fff;
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:14px;
-      box-shadow:0 8px 22px rgba(0,0,0,.06);
-
+      border:1.5px solid var(--line);
+      border-radius:var(--radius2);
+      padding:20px;
+      box-shadow:var(--shadow);
       max-width:760px;
       margin-left:auto;
       margin-right:auto;
+      animation: fadeIn 0.8s ease-out 0.2s both;
     }
 
     /* Entête PDF coloré (visible seulement en PDF) */
     .pdfHeader{
       display:none;
       align-items:center;
-      gap:10px;
-      padding:10px 10px;
-      border-radius:14px;
-      background:linear-gradient(135deg, rgba(26,166,106,.92), rgba(47,207,143,.92));
+      gap:12px;
+      padding:14px 16px;
+      border-radius:16px;
+      background:linear-gradient(135deg, rgba(242,162,58,.92), rgba(255,190,99,.92));
       color:#fff;
+      margin-bottom: 16px;
     }
     .pdfHeader img{
-      width:38px;height:38px;object-fit:contain;
-      background:rgba(255,255,255,.2);
-      border-radius:10px;
-      padding:6px;
+      width:42px;
+      height:42px;
+      object-fit:contain;
+      background:rgba(255,255,255,.25);
+      border-radius:12px;
+      padding:8px;
       flex:0 0 auto;
     }
     .pdfHeader__title{
-      font-size:14px;
-      font-weight:950;
-      line-height:1.15;
+      font-size:16px;
+      font-weight:800;
+      line-height:1.2;
+      letter-spacing: 0.2px;
     }
     .pdfHeader__sub{
-      font-size:11.5px;
-      font-weight:750;
+      font-size:12px;
+      font-weight:600;
       opacity:.95;
-      margin-top:2px;
-      line-height:1.2;
+      margin-top:3px;
+      line-height:1.3;
     }
 
     /* Sections */
     .section{
-      border:1px solid #e6ebf4;
-      border-radius:18px;
-      padding:12px;
-      margin-top:10px;
+      border:1.5px solid #e6ebf4;
+      border-radius:var(--radius);
+      padding:18px 20px;
+      margin-top:16px;
       background:#fff;
+      transition: all 0.3s ease;
+    }
+    .section:hover{
+      border-color: rgba(242,162,58,.3);
+      box-shadow: 0 5px 15px rgba(242,162,58,.08);
     }
     .section h2{
-      margin:0 0 10px;
-      font-size:15px;
+      margin:0 0 16px;
+      font-size:17px;
+      font-weight: 700;
       display:flex;
       align-items:center;
-      gap:10px;
+      gap:12px;
     }
     .badgeNum{
-      width:26px;height:26px;border-radius:9px;
-      display:inline-flex;align-items:center;justify-content:center;
-      font-weight:950;
+      width:32px;
+      height:32px;
+      border-radius:10px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
       background:var(--soft);
-      border:1px solid #cfe6da;
-      color:#145;
+      border:1.5px solid rgba(242,162,58,.25);
+      color:#8a4d0f;
       flex:0 0 auto;
-      font-size:13px;
+      font-size:15px;
+      box-shadow: 0 2px 8px rgba(242,162,58,.1);
     }
 
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width:640px){.row{grid-template-columns:1fr}}
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-bottom: 14px;
+    }
+    @media (max-width:640px){
+      .row{grid-template-columns:1fr}
+    }
 
     label{
       display:block;
-      font-weight:850;
-      font-size:12.5px;
+      font-weight:700;
+      font-size:13px;
       color:#334;
-      margin:8px 0 5px
+      margin:0 0 8px;
+      letter-spacing: 0.2px;
     }
-    .req{color:#d11;font-weight:950}
+    .req{
+      color:#d11;
+      font-weight:900;
+    }
 
     input, select{
       width:100%;
-      border:1px solid #e2e7f0;
+      border:1.5px solid #e2e7f0;
       border-radius:12px;
-      padding:10px 11px;
-      font-size:14.5px;
+      padding:12px 14px;
+      font-size:14px;
       outline:none;
       background:#fff;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    input:hover, select:hover{
+      border-color: rgba(242,162,58,.35);
     }
     input:focus, select:focus{
-      border-color:rgba(26,166,106,.55);
-      box-shadow:0 0 0 4px rgba(26,166,106,.12);
+      border-color:var(--brand);
+      box-shadow:0 0 0 4px rgba(242,162,58,.15);
+      transform: translateY(-1px);
     }
 
-    .hint{margin-top:6px;color:#556;font-size:12.5px;line-height:1.25}
+    .hint{
+      margin-top:8px;
+      color:#556;
+      font-size:13px;
+      line-height:1.4;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hint::before{
+      content: 'ℹ️';
+      font-size: 11px;
+    }
 
     /* Totaux */
     .totals{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:10px;
+      gap:14px;
+      margin-top:16px;
     }
     .kpi{
-      border:1px solid rgba(26,166,106,.25);
-      background:linear-gradient(180deg, rgba(234,250,242,1), rgba(255,255,255,1));
-      border-radius:14px;
-      padding:9px 11px;
+      border:1.5px solid rgba(242,162,58,.25);
+      background:linear-gradient(135deg, rgba(255,242,227,1), rgba(255,255,255,1));
+      border-radius:16px;
+      padding:14px 16px;
+      transition: all 0.3s ease;
     }
-    .kpi b{display:block;font-size:12px;color:#245;line-height:1.2}
-    .kpi span{display:block;margin-top:6px;font-size:19px;font-weight:950;line-height:1.1}
+    .kpi:hover{
+      border-color: rgba(242,162,58,.4);
+      transform: scale(1.02);
+    }
+    .kpi b{
+      display:block;
+      font-size:13px;
+      color:#8a4d0f;
+      line-height:1.3;
+      font-weight: 700;
+    }
+    .kpi span{
+      display:block;
+      margin-top:8px;
+      font-size:24px;
+      font-weight:900;
+      line-height:1.1;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-  /* Case attestation : anti-chevauchement (PDF/html2canvas) */
-.checkline{
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
-  margin-top:10px;
-  padding:10px 12px;
-  border:1px dashed #cfe6da;
-  border-radius:12px;
-  background:#fbfffd;
-}
+    /* Case attestation : anti-chevauchement (PDF/html2canvas) */
+    .checkline{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      margin-top:16px;
+      padding:14px 16px;
+      border:1.5px dashed rgba(242,162,58,.35);
+      border-radius:14px;
+      background:rgba(255,242,227,.5);
+      transition: all 0.2s ease;
+    }
+    .checkline:hover{
+      background:rgba(255,242,227,.8);
+      border-color: rgba(242,162,58,.5);
+    }
+    .checkline input{
+      width:20px;
+      height:20px;
+      margin-top:3px;
+      flex:0 0 auto;
+      cursor: pointer;
+      accent-color: var(--brand);
+    }
+    .checkline b{
+      display:block;
+      font-size:14px;
+      line-height:1.3;
+      margin:0;
+      white-space:normal;
+      font-weight: 700;
+    }
+    .checkline small{
+      display:block;
+      margin-top:7px;
+      font-size:12px;
+      line-height:1.3;
+      color:#55607a;
+      white-space:normal;
+      font-weight: 500;
+    }
 
-.checkline input{
-  width:18px;
-  height:18px;
-  margin-top:3px;
-  flex:0 0 auto;
-}
-
-/* IMPORTANT : forcer en block + line-height + marges */
-.checkline b{
-  display:block;
-  font-size:14px;
-  line-height:1.25;
-  margin:0;
-  white-space:normal;
-}
-
-.checkline small{
-  display:block;
-  margin-top:6px;
-  font-size:12px;
-  line-height:1.25;
-  color:#55607a;
-  white-space:normal;
-}
-
-/* petit boost en mode PDF */
-#pdfArea.pdf-mode .checkline b,
-#pdfArea.pdf-mode .checkline small{
-  line-height:1.3;
-}
-
+    /* petit boost en mode PDF */
+    #pdfArea.pdf-mode .checkline b,
+    #pdfArea.pdf-mode .checkline small{
+      line-height:1.3;
+    }
 
     /* Signature trésorier (PDF only) */
     .pdfTreasurer{
       display:none;
-      margin-top:10px;
-      padding-top:8px;
-      border-top:1px solid #e8ecf3;
+      margin-top:16px;
+      padding-top:14px;
+      border-top:1.5px solid #e8ecf3;
       color:#223;
-      font-size:12px;
-      line-height:1.25;
+      font-size:13px;
+      line-height:1.3;
+    }
+    .pdfTreasurer b{
+      font-weight: 700;
+      font-size: 14px;
     }
     .pdfFooter__line{
       display:flex;
       justify-content:space-between;
-      gap:10px;
-      margin-top:6px;
+      gap:12px;
+      margin-top:10px;
       flex-wrap:wrap;
     }
     .pdfFooter__sig{
       min-width:230px;
-      border:1px solid #e6ebf4;
-      border-radius:12px;
-      padding:9px 11px;
+      border:1.5px solid #e6ebf4;
+      border-radius:14px;
+      padding:12px 14px;
       color:#445;
       background:#fff;
+      font-size: 12px;
     }
 
     /* Mode PDF */
@@ -246,24 +391,73 @@
 
     /* Boutons hors PDF */
     .actions{
-      display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;
-      max-width:760px;margin-left:auto;margin-right:auto;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:20px;
+      max-width:760px;
+      margin-left:auto;
+      margin-right:auto;
+      animation: fadeIn 1s ease-out 0.4s both;
     }
     button{
-      border:0;border-radius:999px;
-      padding:12px 16px;
-      font-weight:950;font-size:15px;
+      border:0;
+      border-radius:14px;
+      padding:13px 18px;
+      font-weight:800;
+      font-size:14px;
       cursor:pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      letter-spacing: 0.3px;
     }
-    .btn-primary{background:#0d6efd;color:#fff}
-    .btn-light{background:#eef2ff;color:#111}
-    .btn-dark{background:#111827;color:#fff}
+    button:hover{
+      transform: translateY(-2px);
+    }
+    button:active{
+      transform: translateY(0);
+    }
+    .btn-primary{
+      background:linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#fff;
+      box-shadow: 0 10px 25px rgba(242,162,58,.25);
+    }
+    .btn-primary:hover{
+      box-shadow: 0 15px 35px rgba(242,162,58,.35);
+    }
+    .btn-light{
+      background:#fff;
+      color:#111;
+      border: 1.5px solid var(--line);
+    }
+    .btn-light:hover{
+      border-color: var(--brand);
+      color: var(--brand);
+      box-shadow: 0 5px 15px rgba(242,162,58,.15);
+    }
+    .btn-dark{
+      background:#111827;
+      color:#fff;
+      box-shadow: 0 5px 15px rgba(0,0,0,.1);
+    }
+    .btn-dark:hover{
+      background:#1f2937;
+      box-shadow: 0 8px 20px rgba(0,0,0,.15);
+    }
 
     /* Impression */
     @media print{
       .hero, .actions{display:none !important}
       body{background:#fff}
       #pdfArea{box-shadow:none;border:0;margin-top:0}
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
@@ -273,8 +467,8 @@
     <header class="hero">
       <img class="hero__logo" src="logo-cdtir66.png" alt="Logo CD Tir 66">
       <div>
-        <h1>Demande de remboursement — Mission divers</h1>
-        <p>PDF A4 (portrait) téléchargeable : KM, péages, hôtel, restaurant. </p>
+        <h1>Demande de remboursement — Mission Divers</h1>
+        <p>PDF A4 (portrait) téléchargeable : KM, péages, hôtel, restaurant.</p>
         <div class="pill">Comité Départemental de Tir — Pyrénées-Orientales (66)</div>
       </div>
     </header>
@@ -285,7 +479,7 @@
       <div class="pdfHeader">
         <img src="logo-cdtir66.png" alt="Logo CD Tir 66">
         <div>
-          <div class="pdfHeader__title">Demande de remboursement — Mission divers</div>
+          <div class="pdfHeader__title">Demande de remboursement — Mission Divers</div>
           <div class="pdfHeader__sub">Comité Départemental de Tir — Pyrénées-Orientales (66)</div>
         </div>
       </div>
@@ -332,8 +526,10 @@
       <section class="section">
         <h2><span class="badgeNum">2</span> Mission</h2>
 
-        <label>Intitulé mission / compétition <span class="req">*</span></label>
-        <input id="intitule" placeholder="Ex : reunion , formation" required>
+        <div style="margin-bottom:14px">
+          <label>Intitulé mission / compétition <span class="req">*</span></label>
+          <input id="intitule" placeholder="Ex : réunion, formation" required>
+        </div>
 
         <div class="row">
           <div>
@@ -413,7 +609,7 @@
         <div class="checkline">
           <input id="atteste" type="checkbox">
           <div>
-            <b>J’atteste sur l’honneur l’exactitude de mes déclarations.</b>
+            <b>J'atteste sur l'honneur l'exactitude de mes déclarations.</b>
             <small>(La signature du trésorier figure en bas du PDF.)</small>
           </div>
         </div>
@@ -424,7 +620,7 @@
       <!-- Signature trésorier (PDF only) -->
       <div id="pdfTreasurer" class="pdfTreasurer">
         <b>Signature du trésorier</b>
-        <div id="faitaLine" style="margin-top:8px;margin-bottom:6px;font-size:12px;"></div>
+        <div id="faitaLine" style="margin-top:10px;margin-bottom:8px;font-size:13px;"></div>
         <div class="pdfFooter__line">
           <div class="pdfFooter__sig">Nom : ____________________<br>Date : ____ / ____ / ______</div>
           <div class="pdfFooter__sig">Signature :</div>
@@ -434,9 +630,9 @@
 
     <!-- Actions -->
     <div class="actions" id="actionsBar">
-      <button class="btn-primary" id="btnPdf">Télécharger le PDF</button>
-      <button class="btn-light" id="btnPrint">Imprimer</button>
-      <button class="btn-dark" id="btnReset" type="button">Réinitialiser</button>
+      <button class="btn-primary" id="btnPdf">📄 Télécharger le PDF</button>
+      <button class="btn-light" id="btnPrint">🖨️ Imprimer</button>
+      <button class="btn-dark" id="btnReset" type="button">↺ Réinitialiser</button>
     </div>
   </div>
 
@@ -551,7 +747,7 @@
 
         pdf.addImage(imgData, "JPEG", x, y, imgW, imgH);
 
-        const filename = `Remboursement divers_${safeName($("nom").value)}_${safeName($("prenom").value)}.pdf`;
+        const filename = `Remboursement_Divers_${safeName($("nom").value)}_${safeName($("prenom").value)}.pdf`;
         pdf.save(filename);
 
       }catch(err){
