@@ -13,6 +13,7 @@
       --muted:#55607a;
       --line:#e8ecf3;
       --shadow: 0 10px 30px rgba(16,24,40,.08);
+      --shadow-lg: 0 20px 50px rgba(16,24,40,.12);
       --radius: 18px;
       --radius2: 24px;
 
@@ -21,13 +22,15 @@
       --club2:#b33bff;
       --club-soft:#f3eaff;
 
-      /* 🔵 Exemple arbitres (si tu as déjà tes couleurs, tu peux remplacer ici) */
+      /* 🔵 Arbitres */
       --arb:#1b5cff;
       --arb2:#00c2ff;
 
-      /* 🟢 Exemple comité/divers (tu peux adapter après) */
+      /* 🟢 Comité */
       --com:#1aa66a;
       --com2:#2fcf8f;
+      
+      /* 🟠 Divers */
       --div:#ff8a00;
       --div2:#ffb000;
     }
@@ -38,48 +41,103 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
       background: var(--bg);
       color: var(--txt);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
+    @keyframes slideUp{
+      from { opacity:0; transform: translateY(30px); }
+      to { opacity:1; transform: translateY(0); }
+    }
+    @keyframes fadeIn{
+      from { opacity:0; }
+      to { opacity:1; }
+    }
+    @keyframes shimmer{
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:40px auto;
+      padding:0 20px;
+      animation: slideUp 0.6s ease-out;
+    }
 
     .hero{
-      background: #fff;
-      border:1px solid var(--line);
+      background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+      border:1.5px solid var(--line);
       border-radius: var(--radius2);
-      box-shadow: var(--shadow);
-      padding:18px 18px;
+      box-shadow: var(--shadow-lg);
+      padding:32px 32px;
       display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:16px;
+      align-items:center;
+      gap:20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before{
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(123,44,255,.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero__logo{
+      width:90px;
+      height:90px;
+      border-radius:18px;
+      background:rgba(123,44,255,.08);
+      padding:12px;
+      object-fit:contain;
+      box-shadow:0 12px 28px rgba(0,0,0,.08);
+      flex:0 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .hero__content{
+      flex: 1;
+      position: relative;
+      z-index: 1;
     }
     .hero h1{
       margin:0;
-      font-size:18px;
-      letter-spacing:.2px;
+      font-size:22px;
+      font-weight: 800;
+      letter-spacing:.3px;
     }
     .hero p{
-      margin:6px 0 0;
-      font-size:13px;
+      margin:10px 0 0;
+      font-size:14px;
       color: var(--muted);
-      line-height:1.35;
+      line-height:1.6;
+      font-weight: 500;
     }
     .pill{
-      background: rgba(16,24,40,.04);
-      border: 1px solid var(--line);
-      padding:8px 10px;
+      background: rgba(16,24,40,.06);
+      border: 1.5px solid var(--line);
+      padding:10px 14px;
       border-radius:999px;
-      font-size:12px;
+      font-size:13px;
+      font-weight: 600;
       color: var(--muted);
       white-space:nowrap;
       height: fit-content;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(10px);
     }
 
     .grid{
-      margin-top:16px;
+      margin-top:28px;
       display:grid;
       grid-template-columns: repeat(2, 1fr);
-      gap:14px;
+      gap:18px;
+      animation: fadeIn 0.8s ease-out 0.2s both;
     }
     @media (max-width: 820px){
       .grid{grid-template-columns:1fr}
@@ -90,61 +148,169 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-
-      padding:16px 18px;
-      border-radius: 18px;
+      gap:16px;
+      padding:24px 26px;
+      border-radius: 20px;
       text-decoration:none;
       color:#fff;
-
-      box-shadow: 0 10px 22px rgba(16,24,40,.10);
-      border: 1px solid rgba(255,255,255,.18);
-      transition: transform .15s ease, box-shadow .15s ease;
+      box-shadow: 0 10px 25px rgba(16,24,40,.12);
+      border: 1.5px solid rgba(255,255,255,.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .tile::before{
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+      transition: left 0.5s ease;
+    }
+    .tile:hover::before{
+      left: 100%;
     }
     .tile:hover{
-      transform: translateY(-2px);
-      box-shadow: 0 14px 28px rgba(16,24,40,.16);
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 20px 40px rgba(16,24,40,.18);
+      border-color: rgba(255,255,255,.35);
+    }
+    .tile:active{
+      transform: translateY(-2px) scale(1.0);
+    }
+    
+    .tile .content{
+      position: relative;
+      z-index: 1;
     }
     .tile .title{
       font-weight:900;
-      font-size:16px;
-      letter-spacing:.2px;
+      font-size:18px;
+      letter-spacing:.3px;
+      line-height: 1.3;
+      text-shadow: 0 2px 4px rgba(0,0,0,.1);
     }
     .tile .subtitle{
-      font-size:12px;
-      opacity:.9;
-      margin-top:3px;
-      line-height:1.35;
+      font-size:13px;
+      opacity:.92;
+      margin-top:6px;
+      line-height:1.5;
+      font-weight: 500;
     }
     .tile .badge{
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.25);
-      padding:6px 10px;
+      background: rgba(255,255,255,.2);
+      border: 1.5px solid rgba(255,255,255,.3);
+      padding:8px 14px;
       border-radius:999px;
-      font-size:12px;
+      font-size:13px;
+      font-weight: 700;
       white-space:nowrap;
       height: fit-content;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
     }
 
-    /* ✅ Variantes couleurs */
-    .tile-arb{ background: linear-gradient(135deg, var(--arb), var(--arb2)); }
-    .tile-com{ background: linear-gradient(135deg, var(--com), var(--com2)); }
-    .tile-div{ background: linear-gradient(135deg, var(--div), var(--div2)); }
+    /* ✅ Variantes couleurs avec effets radiaux */
+    .tile-arb{ 
+      background: linear-gradient(135deg, var(--arb), var(--arb2));
+    }
+    .tile-arb::after{
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .tile-arb:hover{
+      box-shadow: 0 20px 40px rgba(27,92,255,.3);
+    }
+
+    .tile-com{ 
+      background: linear-gradient(135deg, var(--com), var(--com2));
+    }
+    .tile-com::after{
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .tile-com:hover{
+      box-shadow: 0 20px 40px rgba(26,166,106,.3);
+    }
+
+    .tile-div{ 
+      background: linear-gradient(135deg, var(--div), var(--div2));
+    }
+    .tile-div::after{
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .tile-div:hover{
+      box-shadow: 0 20px 40px rgba(255,138,0,.3);
+    }
 
     /* ✅ CLUB mauve identique */
     .tile-club{
       background: linear-gradient(135deg, var(--club), var(--club2));
-      box-shadow: 0 10px 22px rgba(123,44,255,.25);
+    }
+    .tile-club::after{
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,.15) 0%, transparent 70%);
+      pointer-events: none;
     }
     .tile-club:hover{
-      box-shadow: 0 14px 28px rgba(123,44,255,.35);
+      box-shadow: 0 20px 40px rgba(123,44,255,.35);
     }
 
     .footer{
-      margin-top:16px;
-      font-size:12px;
+      margin-top:32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      font-size:13px;
       color: var(--muted);
       text-align:center;
+      font-weight: 500;
+      animation: fadeIn 1s ease-out 0.4s both;
+    }
+    .footer::before{
+      content: '🎯 ';
+      margin-right: 6px;
+    }
+
+    /* Animation stagger pour les tiles */
+    .tile:nth-child(1){ animation: slideUp 0.6s ease-out 0.1s both; }
+    .tile:nth-child(2){ animation: slideUp 0.6s ease-out 0.2s both; }
+    .tile:nth-child(3){ animation: slideUp 0.6s ease-out 0.3s both; }
+    .tile:nth-child(4){ animation: slideUp 0.6s ease-out 0.4s both; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
@@ -152,11 +318,12 @@
 <body>
   <div class="wrap">
     <div class="hero">
-      <div>
+      <img class="hero__logo" src="logo-cdtir66.png" alt="Logo CD Tir 66">
+      <div class="hero__content">
         <h1>CD Tir 66 — Portail des formulaires</h1>
         <p>
           Accès rapide aux demandes de remboursement et formulaires.
-          <br/>Choisir une catégorie ci-dessous.
+          <br/>Choisir une catégorie ci-dessous pour démarrer.
         </p>
       </div>
       <div class="pill">Version : index</div>
@@ -165,7 +332,7 @@
     <div class="grid">
       <!-- 🔵 ARBITRES -->
       <a class="tile tile-arb" href="arbitre.html">
-        <div>
+        <div class="content">
           <div class="title">Mission Arbitre</div>
           <div class="subtitle">Remboursement arbitres (déplacements, repas, etc.)</div>
         </div>
@@ -174,7 +341,7 @@
 
       <!-- 🟢 COMITÉ -->
       <a class="tile tile-com" href="comite.html">
-        <div>
+        <div class="content">
           <div class="title">Mission Comité</div>
           <div class="subtitle">Remboursement comité / organisation</div>
         </div>
@@ -183,7 +350,7 @@
 
       <!-- 🟠 DIVERS -->
       <a class="tile tile-div" href="divers.html">
-        <div>
+        <div class="content">
           <div class="title">Mission Divers</div>
           <div class="subtitle">Autres missions et remboursements</div>
         </div>
@@ -192,7 +359,7 @@
 
       <!-- 🟣 CLUB (✅ MAUVE IDENTIQUE À club.html) -->
       <a class="tile tile-club" href="club.html">
-        <div>
+        <div class="content">
           <div class="title">Demande de club</div>
           <div class="subtitle">Remboursement organisation compétition départementale</div>
         </div>
