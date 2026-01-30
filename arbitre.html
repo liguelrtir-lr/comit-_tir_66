@@ -26,9 +26,9 @@
       --radius:18px;
       --radius2:22px;
     }
-    
+
     *{box-sizing:border-box}
-    
+
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -45,10 +45,6 @@
     @keyframes fadeIn{
       from { opacity:0; }
       to { opacity:1; }
-    }
-    @keyframes pulse{
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.02); }
     }
 
     .wrap{
@@ -74,10 +70,7 @@
     .hero::before{
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: radial-gradient(circle at 20% 80%, rgba(255,255,255,.15) 0%, transparent 50%);
       pointer-events: none;
     }
@@ -411,12 +404,9 @@
       font-family: inherit;
       letter-spacing: 0.3px;
     }
-    button:hover{
-      transform: translateY(-2px);
-    }
-    button:active{
-      transform: translateY(0);
-    }
+    button:hover{ transform: translateY(-2px); }
+    button:active{ transform: translateY(0); }
+
     .btn-primary{
       background:linear-gradient(135deg, var(--brand), var(--brand2));
       color:#fff;
@@ -425,6 +415,7 @@
     .btn-primary:hover{
       box-shadow: 0 15px 35px rgba(26,166,106,.35);
     }
+
     .btn-light{
       background:#fff;
       color:#111;
@@ -435,6 +426,7 @@
       color: var(--brand);
       box-shadow: 0 5px 15px rgba(26,166,106,.15);
     }
+
     .btn-dark{
       background:#111827;
       color:#fff;
@@ -630,13 +622,12 @@
 
     <!-- Actions -->
     <div class="actions" id="actionsBar">
-  <button class="btn-light" id="btnBack" type="button">← Retour accueil</button>
+      <button class="btn-light" id="btnBack" type="button">← Retour accueil</button>
 
-  <button class="btn-primary" id="btnPdf" type="button">📄 Télécharger le PDF</button>
-  <button class="btn-light" id="btnPrint" type="button">🖨️ Imprimer</button>
-  <button class="btn-dark" id="btnReset" type="button">↺ Réinitialiser</button>
-</div>
-
+      <button class="btn-primary" id="btnPdf" type="button">📄 Télécharger le PDF</button>
+      <button class="btn-light" id="btnPrint" type="button">🖨️ Imprimer</button>
+      <button class="btn-dark" id="btnReset" type="button">↺ Réinitialiser</button>
+    </div>
   </div>
 
   <script>
@@ -645,8 +636,10 @@
       const x = Number(String(v ?? "").replace(",", "."));
       return Number.isFinite(x) ? x : 0;
     };
+
+    // FIX: maximumFractionDigits (typo + sécurité)
     const eur = (x) =>
-      x.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigals: 2 }) + " €";
+      Number(x || 0).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 
     const TAUX_KM = 0.40;
     const FAIT_A = "Saint-Cyprien";
@@ -669,6 +662,28 @@
     });
     calc();
 
+    // ===== Bouton RETOUR (avec protection anti-perte de saisie) =====
+    let isDirty = false;
+    document.querySelectorAll("#pdfArea input, #pdfArea select").forEach(el => {
+      el.addEventListener("input", () => isDirty = true);
+      el.addEventListener("change", () => isDirty = true);
+    });
+
+    function goBack(){
+      if(isDirty){
+        const ok = confirm("Vous avez commencé à remplir le formulaire. Quitter sans enregistrer ?");
+        if(!ok) return;
+      }
+      // Retour vers l'accueil (fallback historique)
+      try{
+        window.location.href = "index.html";
+      }catch(e){
+        history.back();
+      }
+    }
+    $("btnBack").addEventListener("click", goBack);
+
+    // Boutons existants
     $("btnPrint").addEventListener("click", () => window.print());
     $("btnReset").addEventListener("click", () => location.reload());
 
