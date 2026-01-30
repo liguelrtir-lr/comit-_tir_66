@@ -3,33 +3,37 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CD Tir 66 — Demande de Club (Remboursement)</title>
+  <title>CD Tir 66 — Mission Divers (Remboursement)</title>
+
+  <!-- Libs PDF (ONLINE) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <style>
     :root{
       --bg:#f6f7fb;
-      --card:#ffffff;
       --txt:#0f1222;
       --muted:#55607a;
       --line:#e8ecf3;
 
-      /* Thème Club (mauve) */
-      --brand:#7b2cff;
-      --brand2:#b33bff;
-      --soft:#f3eaff;
+      /* Divers - Couleurs (tu peux changer ici si besoin) */
+      --brand:#0ea5e9;   /* bleu/cyan */
+      --brand2:#38bdf8;  /* bleu clair */
+      --soft:#e0f2fe;    /* fond doux */
 
       --shadow: 0 10px 30px rgba(16,24,40,.08);
-      --shadow-lg: 0 20px 50px rgba(123,44,255,.15);
-      --radius: 16px;
-      --radius2: 22px;
+      --shadow-lg: 0 20px 50px rgba(14,165,233,.18);
+      --radius:18px;
+      --radius2:22px;
     }
 
     *{box-sizing:border-box}
+
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: var(--bg);
-      color: var(--txt);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--txt);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -42,10 +46,6 @@
       from { opacity:0; }
       to { opacity:1; }
     }
-    @keyframes pulse{
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.02); }
-    }
 
     .wrap{
       max-width:1100px;
@@ -53,175 +53,206 @@
       padding:0 20px;
       animation: slideUp 0.6s ease-out;
     }
-    
-    .header{
-      display:flex;
-      gap:16px;
-      align-items:center;
-      justify-content:space-between;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      color:white;
-      border-radius: var(--radius2);
+
+    /* Bandeau écran (non capturé dans le PDF) */
+    .hero{
+      background:linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#fff;
+      border-radius:var(--radius2);
       padding:24px 28px;
-      box-shadow: var(--shadow-lg);
+      box-shadow:var(--shadow-lg);
+      display:flex;
+      gap:20px;
+      align-items:center;
       position: relative;
       overflow: hidden;
     }
-    .header::before{
+    .hero::before{
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: radial-gradient(circle at 20% 80%, rgba(255,255,255,.15) 0%, transparent 50%);
       pointer-events: none;
     }
-    .header .title{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      position: relative;
-      z-index: 1;
-    }
-    .header h1{
-      margin:0;
-      font-size:20px;
-      font-weight: 800;
-      letter-spacing:.3px;
-      line-height: 1.3;
-    }
-    .header p{
-      margin:0;
-      opacity:.92;
-      font-size:14px;
-      font-weight: 500;
-    }
-    .badge{
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.25);
-      padding:10px 14px;
-      border-radius:999px;
-      font-size:13px;
-      font-weight: 600;
-      white-space:nowrap;
+    .hero__logo{
+      width:90px;
+      height:90px;
+      border-radius:18px;
+      background:rgba(255,255,255,.25);
+      padding:12px;
+      object-fit:contain;
+      box-shadow:0 12px 28px rgba(0,0,0,.2);
+      flex:0 0 auto;
       position: relative;
       z-index: 1;
       backdrop-filter: blur(10px);
     }
-    .validated .badge{
-      animation: pulse 2s ease-in-out infinite;
+    .hero h1{
+      margin:0;
+      font-size:clamp(22px,3vw,34px);
+      font-weight: 800;
+      line-height:1.2;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.3px;
     }
-    .validated .badge::after{
-      content:" • validée";
-      font-weight:900;
-      opacity:.95;
+    .hero p{
+      margin:8px 0 0;
+      opacity:.92;
+      font-size: 15px;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+      line-height: 1.4;
+    }
+    .pill{
+      display:inline-block;
+      margin-top:12px;
+      background:rgba(255,255,255,.22);
+      border:1.5px solid rgba(255,255,255,.35);
+      padding:8px 14px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:13px;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(10px);
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1.3fr .7fr;
-      gap:20px;
+    /* Zone capturée PDF : 1 colonne (A4 friendly) */
+    #pdfArea{
       margin-top:20px;
+      background:#fff;
+      border:1.5px solid var(--line);
+      border-radius:var(--radius2);
+      padding:20px;
+      box-shadow:var(--shadow);
+      max-width:760px;
+      margin-left:auto;
+      margin-right:auto;
+      animation: fadeIn 0.8s ease-out 0.2s both;
     }
-    @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
 
-    .card{
-      background: var(--card);
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Entête PDF coloré (visible seulement en PDF) */
+    .pdfHeader{
+      display:none;
+      align-items:center;
+      gap:12px;
+      padding:14px 16px;
+      border-radius:16px;
+      background:linear-gradient(135deg, rgba(14,165,233,.92), rgba(56,189,248,.92));
+      color:#fff;
+      margin-bottom: 16px;
     }
-    .card:hover{
-      transform: translateY(-2px);
-      box-shadow: 0 15px 40px rgba(16,24,40,.12);
+    .pdfHeader img{
+      width:42px;
+      height:42px;
+      object-fit:contain;
+      background:rgba(255,255,255,.25);
+      border-radius:12px;
+      padding:8px;
+      flex:0 0 auto;
     }
-    .card .head{
+    .pdfHeader__title{
+      font-size:16px;
+      font-weight:800;
+      line-height:1.2;
+      letter-spacing: 0.2px;
+    }
+    .pdfHeader__sub{
+      font-size:12px;
+      font-weight:600;
+      opacity:.95;
+      margin-top:3px;
+      line-height:1.3;
+    }
+
+    /* Sections */
+    .section{
+      border:1.5px solid #e6ebf4;
+      border-radius:var(--radius);
       padding:18px 20px;
-      border-bottom: 1px solid var(--line);
+      margin-top:16px;
+      background:#fff;
+      transition: all 0.3s ease;
+    }
+    .section:hover{
+      border-color: rgba(14,165,233,.25);
+      box-shadow: 0 5px 15px rgba(14,165,233,.08);
+    }
+    .section h2{
+      margin:0 0 16px;
+      font-size:17px;
+      font-weight: 700;
       display:flex;
       align-items:center;
-      justify-content:space-between;
       gap:12px;
-      background: linear-gradient(180deg, rgba(123,44,255,.12), rgba(123,44,255,.04));
-      position: relative;
     }
-    .card .head::after{
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, var(--brand), var(--brand2));
-      opacity: 0.3;
-    }
-    .card .head h2{
-      margin:0;
+    .badgeNum{
+      width:32px;
+      height:32px;
+      border-radius:10px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      background:var(--soft);
+      border:1.5px solid rgba(14,165,233,.25);
+      color:#0c4a6e;
+      flex:0 0 auto;
       font-size:15px;
-      font-weight: 700;
-      color: var(--txt);
-    }
-    .card .body{
-      padding:20px 20px 24px;
+      box-shadow: 0 2px 8px rgba(14,165,233,.10);
     }
 
     .row{
       display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:16px;
-      margin-bottom: 16px;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-bottom: 14px;
     }
-    @media (max-width: 720px){ .row{grid-template-columns:1fr} }
-
-    .field-group{
-      margin-bottom: 16px;
+    @media (max-width:640px){
+      .row{grid-template-columns:1fr}
     }
 
     label{
       display:block;
+      font-weight:700;
       font-size:13px;
-      font-weight: 600;
-      color: var(--muted);
+      color:#334;
       margin:0 0 8px;
       letter-spacing: 0.2px;
     }
-    
-    input[type="text"], 
-    input[type="email"], 
-    input[type="date"], 
-    input[type="number"], 
-    textarea{
+    .req{
+      color:#d11;
+      font-weight:900;
+    }
+
+    input, select{
       width:100%;
+      border:1.5px solid #e2e7f0;
+      border-radius:12px;
       padding:12px 14px;
-      border:1.5px solid var(--line);
-      border-radius: 12px;
-      outline:none;
-      background:white;
       font-size:14px;
+      outline:none;
+      background:#fff;
       transition: all 0.2s ease;
       font-family: inherit;
     }
-    input:hover, textarea:hover{
-      border-color: rgba(123,44,255,.35);
+    input:hover, select:hover{
+      border-color: rgba(14,165,233,.35);
     }
-    input:focus, textarea:focus{
-      border-color: var(--brand);
-      box-shadow: 0 0 0 4px rgba(123,44,255,.15);
+    input:focus, select:focus{
+      border-color:var(--brand);
+      box-shadow:0 0 0 4px rgba(14,165,233,.15);
       transform: translateY(-1px);
-    }
-    textarea{
-      resize: vertical;
-      min-height: 100px;
-      line-height: 1.6;
     }
 
     .hint{
-      font-size:12px;
-      color: var(--muted);
-      margin-top:7px;
+      margin-top:8px;
+      color:#556;
+      font-size:13px;
+      line-height:1.4;
+      font-weight: 500;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -231,785 +262,510 @@
       font-size: 11px;
     }
 
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
-      background: var(--soft);
-      border: 1.5px solid rgba(123,44,255,.25);
-      color: #3a1a7a;
-      font-size:13px;
-      font-weight: 600;
-      user-select:none;
-      white-space:nowrap;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .pill:hover{
-      background: rgba(123,44,255,.15);
-      border-color: rgba(123,44,255,.4);
-      transform: translateX(2px);
-    }
-    .pill input{
-      accent-color: var(--brand);
-      cursor: pointer;
-      width: 18px;
-      height: 18px;
-    }
-
+    /* Totaux */
     .totals{
-      display:flex;
-      flex-direction:column;
+      display:grid;
+      grid-template-columns:1fr 1fr;
       gap:14px;
+      margin-top:16px;
     }
     .kpi{
-      padding:18px 18px;
-      border:1.5px solid var(--line);
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(123,44,255,.10), rgba(123,44,255,.03));
+      border:1.5px solid rgba(14,165,233,.25);
+      background:linear-gradient(135deg, rgba(224,242,254,1), rgba(255,255,255,1));
+      border-radius:16px;
+      padding:14px 16px;
       transition: all 0.3s ease;
     }
     .kpi:hover{
-      border-color: rgba(123,44,255,.3);
+      border-color: rgba(14,165,233,.4);
       transform: scale(1.02);
     }
-    .kpi .big{
-      font-size:32px;
+    .kpi b{
+      display:block;
+      font-size:13px;
+      color:#0c4a6e;
+      line-height:1.3;
+      font-weight: 700;
+    }
+    .kpi span{
+      display:block;
+      margin-top:8px;
+      font-size:24px;
       font-weight:900;
-      letter-spacing:.3px;
+      line-height:1.1;
       background: linear-gradient(135deg, var(--brand), var(--brand2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .kpi .sub{
-      font-size:13px;
-      color: var(--muted);
-      margin-top: 6px;
+
+    /* Case attestation : anti-chevauchement (PDF/html2canvas) */
+    .checkline{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      margin-top:16px;
+      padding:14px 16px;
+      border:1.5px dashed rgba(14,165,233,.35);
+      border-radius:14px;
+      background:rgba(224,242,254,.55);
+      transition: all 0.2s ease;
+    }
+    .checkline:hover{
+      background:rgba(224,242,254,.85);
+      border-color: rgba(14,165,233,.5);
+    }
+    .checkline input{
+      width:20px;
+      height:20px;
+      margin-top:3px;
+      flex:0 0 auto;
+      cursor: pointer;
+      accent-color: var(--brand);
+    }
+    .checkline b{
+      display:block;
+      font-size:14px;
+      line-height:1.3;
+      margin:0;
+      white-space:normal;
+      font-weight: 700;
+    }
+    .checkline small{
+      display:block;
+      margin-top:7px;
+      font-size:12px;
+      line-height:1.3;
+      color:#55607a;
+      white-space:normal;
       font-weight: 500;
     }
 
-    .breakdown{
-      padding:16px 16px;
-      border:1.5px dashed rgba(123,44,255,.35);
-      border-radius: 16px;
-      background: rgba(123,44,255,.04);
+    /* petit boost en mode PDF */
+    #pdfArea.pdf-mode .checkline b,
+    #pdfArea.pdf-mode .checkline small{ line-height:1.3; }
+
+    /* Signature trésorier (PDF only) */
+    .pdfTreasurer{
+      display:none;
+      margin-top:16px;
+      padding-top:14px;
+      border-top:1.5px solid #e8ecf3;
+      color:#223;
       font-size:13px;
-      color:#2b2f3a;
+      line-height:1.3;
     }
-    .breakdown .line{
+    .pdfTreasurer b{
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .pdfFooter__line{
       display:flex;
       justify-content:space-between;
       gap:12px;
-      padding:8px 0;
-      border-bottom:1px dashed rgba(123,44,255,.2);
-      transition: background 0.2s ease;
-    }
-    .breakdown .line:hover{
-      background: rgba(123,44,255,.05);
-      padding-left: 6px;
-      padding-right: 6px;
-      margin-left: -6px;
-      margin-right: -6px;
-      border-radius: 8px;
-    }
-    .breakdown .line:last-child{border-bottom:none}
-    .breakdown .lbl{
-      color: var(--muted);
-      font-weight: 500;
-    }
-    .breakdown .val{
-      font-variant-numeric: tabular-nums;
-      font-weight: 600;
-    }
-    .breakdown .total{
       margin-top:10px;
-      padding-top:12px;
-      border-top:2px dashed rgba(123,44,255,.35);
-      font-weight:900;
-      display:flex;
-      justify-content:space-between;
-      font-size: 14px;
+      flex-wrap:wrap;
+    }
+    .pdfFooter__sig{
+      min-width:230px;
+      border:1.5px solid #e6ebf4;
+      border-radius:14px;
+      padding:12px 14px;
+      color:#445;
+      background:#fff;
+      font-size: 12px;
     }
 
+    /* Mode PDF */
+    #pdfArea.pdf-mode .pdfHeader{display:flex}
+    #pdfArea.pdf-mode .pdfTreasurer{display:block}
+
+    /* Boutons hors PDF */
     .actions{
       display:flex;
       gap:12px;
       flex-wrap:wrap;
-      padding:18px 20px;
-      border-top:1px solid var(--line);
-      background: linear-gradient(180deg, #fafbfc, #fff);
+      margin-top:20px;
+      max-width:760px;
+      margin-left:auto;
+      margin-right:auto;
+      animation: fadeIn 1s ease-out 0.4s both;
     }
-    .btn{
-      border:none;
-      border-radius: 14px;
+    button{
+      border:0;
+      border-radius:14px;
       padding:13px 18px;
       font-weight:800;
-      cursor:pointer;
       font-size:14px;
-      letter-spacing: 0.3px;
+      cursor:pointer;
       transition: all 0.2s ease;
       font-family: inherit;
+      letter-spacing: 0.3px;
     }
-    .btn:hover:not(:disabled){
-      transform: translateY(-2px);
-    }
-    .btn:active:not(:disabled){
-      transform: translateY(0);
-    }
+    button:hover{ transform: translateY(-2px); }
+    button:active{ transform: translateY(0); }
+
     .btn-primary{
-      color:white;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 10px 25px rgba(123,44,255,.25);
+      background:linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#fff;
+      box-shadow: 0 10px 25px rgba(14,165,233,.22);
     }
-    .btn-primary:hover:not(:disabled){
-      box-shadow: 0 15px 35px rgba(123,44,255,.35);
+    .btn-primary:hover{
+      box-shadow: 0 15px 35px rgba(14,165,233,.30);
     }
-    .btn-ghost{
-      background: white;
-      border:1.5px solid var(--line);
-      color: var(--txt);
+
+    .btn-light{
+      background:#fff;
+      color:#111;
+      border: 1.5px solid var(--line);
     }
-    .btn-ghost:hover:not(:disabled){
+    .btn-light:hover{
       border-color: var(--brand);
       color: var(--brand);
-      box-shadow: 0 5px 15px rgba(123,44,255,.15);
-    }
-    button:disabled{
-      opacity:.45;
-      cursor:not-allowed;
+      box-shadow: 0 5px 15px rgba(14,165,233,.15);
     }
 
-    .note{
-      font-size:13px;
-      color: var(--muted);
-      padding: 12px 20px 18px;
-      line-height: 1.6;
-      font-weight: 500;
+    .btn-dark{
+      background:#111827;
+      color:#fff;
+      box-shadow: 0 5px 15px rgba(0,0,0,.1);
     }
-    .err{
-      display:none;
-      margin:12px 20px 0;
-      padding:12px 14px;
-      border-radius: 12px;
-      border: 1.5px solid rgba(224,49,49,.4);
-      background: rgba(224,49,49,.06);
-      color: #8a1c1c;
-      font-size: 13px;
-      font-weight: 600;
-      animation: fadeIn 0.3s ease;
-    }
-    .err::before{
-      content: '⚠️ ';
-      margin-right: 6px;
+    .btn-dark:hover{
+      background:#1f2937;
+      box-shadow: 0 8px 20px rgba(0,0,0,.15);
     }
 
-    /* =======================
-       PDF (1 page A4)
-       ======================= */
-    .pdf-stage{
-      position: fixed;
-      left: -99999px;
-      top: 0;
-      width: 210mm;
+    /* Impression */
+    @media print{
+      .hero, .actions{display:none !important}
+      body{background:#fff}
+      #pdfArea{box-shadow:none;border:0;margin-top:0}
     }
-    .pdf-sheet{
-      width: 210mm;
-      min-height: 297mm;
-      background: #fff;
-      color: #0f1222;
-      padding: 10mm;
-    }
-    .pdf-band{
-      border-radius: 14px;
-      padding: 12px 14px;
-      color: #fff;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-    }
-    .pdf-band h1{
-      margin:0;
-      font-size: 16px;
-      line-height: 1.2;
-      letter-spacing:.2px;
-    }
-    .pdf-band .meta{
-      margin-top:4px;
-      font-size: 11px;
-      opacity: .92;
-      line-height: 1.35;
-    }
-    .pdf-badge{
-      font-size: 11px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.25);
-      background: rgba(255,255,255,.14);
-      white-space:nowrap;
-      height: fit-content;
-    }
-    .pdf-grid{
-      display:grid;
-      grid-template-columns: 1.25fr .75fr;
-      gap: 8mm;
-      margin-top: 8mm;
-    }
-    .pdf-card{
-      border: 1px solid #e8ecf3;
-      border-radius: 14px;
-      overflow: hidden;
-    }
-    .pdf-card .hd{
-      padding: 10px 12px;
-      background: rgba(123,44,255,.08);
-      border-bottom: 1px solid #e8ecf3;
-      font-weight: 900;
-      font-size: 12px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-    }
-    .pdf-card .bd{
-      padding: 10px 12px;
-      font-size: 12px;
-    }
-    .pdf-row{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      padding: 6px 0;
-      border-bottom: 1px dashed #e8ecf3;
-    }
-    .pdf-row:last-child{
-      border-bottom: none;
-    }
-    .pdf-label{
-      color: #55607a;
-    }
-    .pdf-val{
-      font-variant-numeric: tabular-nums;
-      text-align:right;
-    }
-    .pdf-kpi{
-      font-size: 26px;
-      font-weight: 900;
-      margin-bottom: 4px;
-      color: #7b2cff;
-    }
-    .pdf-small{
-      font-size: 11px;
-      color: #55607a;
-      line-height: 1.4;
-    }
-    .pdf-visa{
-      margin-top: 8mm;
-    }
-    .pdf-box{
-      border: 1px dashed #e8ecf3;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 11px;
-      color: #55607a;
-      min-height: 40mm;
-      background: rgba(123,44,255,.02);
-    }
-    .pdf-footer{
-      margin-top: 10mm;
-      padding-top: 6mm;
-      border-top: 1px solid #e8ecf3;
-      display: flex;
-      justify-content: space-between;
-      font-size: 10px;
-      color: #55607a;
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div id="root" class="wrap">
-    <div class="header">
-      <div class="title">
-        <h1>Demande de remboursement — Club</h1>
-        <p>Organisation compétition départementale • CD Tir 66</p>
+  <div class="wrap">
+    <header class="hero">
+      <img class="hero__logo" src="logo-cdtir66.png" alt="Logo CD Tir 66">
+      <div>
+        <h1>Demande de remboursement — Mission Divers</h1>
+        <p>PDF A4 (portrait) téléchargeable : KM, péages, hôtel, restaurant.</p>
+        <div class="pill">Comité Départemental de Tir — Pyrénées-Orientales (66)</div>
       </div>
-      <div class="badge">Club (mauve)</div>
+    </header>
+
+    <!-- Zone capturée PDF -->
+    <div id="pdfArea">
+      <!-- Entête PDF coloré -->
+      <div class="pdfHeader">
+        <img src="logo-cdtir66.png" alt="Logo CD Tir 66">
+        <div>
+          <div class="pdfHeader__title">Demande de remboursement — Mission Divers</div>
+          <div class="pdfHeader__sub">Comité Départemental de Tir — Pyrénées-Orientales (66)</div>
+        </div>
+      </div>
+
+      <!-- 1) Identité -->
+      <section class="section">
+        <h2><span class="badgeNum">1</span> Identité</h2>
+
+        <div class="row">
+          <div>
+            <label>Nom <span class="req">*</span></label>
+            <input id="nom" required>
+          </div>
+          <div>
+            <label>Prénom <span class="req">*</span></label>
+            <input id="prenom" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Club <span class="req">*</span></label>
+            <input id="club" required>
+          </div>
+          <div>
+            <label>N° licence</label>
+            <input id="licence">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Email <span class="req">*</span></label>
+            <input id="email" type="email" required>
+          </div>
+          <div>
+            <label>Téléphone</label>
+            <input id="tel">
+          </div>
+        </div>
+      </section>
+
+      <!-- 2) Mission -->
+      <section class="section">
+        <h2><span class="badgeNum">2</span> Mission</h2>
+
+        <div style="margin-bottom:14px">
+          <label>Intitulé mission / activité <span class="req">*</span></label>
+          <input id="intitule" placeholder="Ex : achat matériel / déplacement divers / logistique" required>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Lieu <span class="req">*</span></label>
+            <input id="lieu" placeholder="Ville / lieu" required>
+          </div>
+          <div>
+            <label>Aller / retour</label>
+            <select id="ar">
+              <option value="Oui">Oui</option>
+              <option value="Non">Non</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Date début <span class="req">*</span></label>
+            <input id="d1" type="date" required>
+          </div>
+          <div>
+            <label>Date fin <span class="req">*</span></label>
+            <input id="d2" type="date" required>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3) Frais -->
+      <section class="section">
+        <h2><span class="badgeNum">3</span> Frais à rembourser</h2>
+
+        <div class="row">
+          <div>
+            <label>Distance totale (km)</label>
+            <input id="km" type="number" min="0" step="1" placeholder="Ex : 180">
+          </div>
+          <div>
+            <label>Taux kilométrique (€/km)</label>
+            <input id="taux" type="text" value="0,40" readonly>
+            <div class="hint">Taux fixé à 0,40 €/km.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Autoroute / péages (€)</label>
+            <input id="peage" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div>
+            <label>Hôtel (€)</label>
+            <input id="hotel" type="number" min="0" step="0.01" value="0">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Restaurant (€)</label>
+            <input id="resto" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div>
+            <label>Autres (optionnel) (€)</label>
+            <input id="autres" type="number" min="0" step="0.01" value="0">
+          </div>
+        </div>
+
+        <div class="totals">
+          <div class="kpi">
+            <b>Total KM (km × 0,40)</b>
+            <span id="totalKm">—</span>
+          </div>
+          <div class="kpi">
+            <b>Total général</b>
+            <span id="totalGen">0,00 €</span>
+          </div>
+        </div>
+
+        <div class="checkline">
+          <input id="atteste" type="checkbox">
+          <div>
+            <b>J'atteste sur l'honneur l'exactitude de mes déclarations.</b>
+            <small>(La signature du trésorier figure en bas du PDF.)</small>
+          </div>
+        </div>
+
+        <div class="hint">⚠️ Les justificatifs (factures, autoroute) ne sont pas intégrés automatiquement dans le PDF.</div>
+      </section>
+
+      <!-- Signature trésorier (PDF only) -->
+      <div id="pdfTreasurer" class="pdfTreasurer">
+        <b>Signature du trésorier</b>
+        <div id="faitaLine" style="margin-top:10px;margin-bottom:8px;font-size:13px;"></div>
+        <div class="pdfFooter__line">
+          <div class="pdfFooter__sig">Nom : ____________________<br>Date : ____ / ____ / ______</div>
+          <div class="pdfFooter__sig">Signature :</div>
+        </div>
+      </div>
     </div>
 
-    <form id="form" class="grid">
-      <!-- Col 1 -->
-      <div>
-        <div class="card">
-          <div class="head">
-            <h2>Informations Club & Événement</h2>
-          </div>
-          <div class="body">
-            <div class="row">
-              <div class="field-group">
-                <label for="clubName">Nom du club *</label>
-                <input type="text" id="clubName" placeholder="Ex: Club de tir Perpignan" required />
-              </div>
-              <div class="field-group">
-                <label for="clubFft">N° affiliation FFT (optionnel)</label>
-                <input type="text" id="clubFft" placeholder="Ex: 066XXXX" />
-              </div>
-            </div>
+    <!-- Actions -->
+    <div class="actions" id="actionsBar">
+      <button class="btn-light" id="btnBack" type="button">← Retour accueil</button>
 
-            <div class="row">
-              <div class="field-group">
-                <label for="eventName">Nom de la compétition *</label>
-                <input type="text" id="eventName" placeholder="Ex: Championnat départemental 10m" required />
-              </div>
-              <div class="field-group">
-                <label for="eventDate">Date de l'événement *</label>
-                <input type="date" id="eventDate" required />
-              </div>
-            </div>
-
-            <div class="field-group">
-              <label for="place">Lieu (optionnel)</label>
-              <input type="text" id="place" placeholder="Ex: Stand de tir de Perpignan" />
-            </div>
-
-            <div class="field-group">
-              <label for="notes">Notes / Observations</label>
-              <textarea id="notes" placeholder="Informations complémentaires..."></textarea>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:20px">
-          <div class="head">
-            <h2>Contact</h2>
-          </div>
-          <div class="body">
-            <div class="row">
-              <div class="field-group">
-                <label for="contactName">Nom du contact *</label>
-                <input type="text" id="contactName" placeholder="Prénom Nom" required />
-              </div>
-              <div class="field-group">
-                <label for="contactEmail">Email *</label>
-                <input type="email" id="contactEmail" placeholder="contact@club.fr" required />
-              </div>
-            </div>
-            <div class="field-group">
-              <label for="contactTel">Téléphone (optionnel)</label>
-              <input type="text" id="contactTel" placeholder="06 XX XX XX XX" />
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:20px">
-          <div class="head">
-            <h2>Éléments à rembourser</h2>
-            <span style="font-size:12px;color:#7b2cff;font-weight:800;">50€ / 2€ / 25€ / 50€</span>
-          </div>
-          <div class="body">
-            <div class="row">
-              <div class="field-group">
-                <label for="days">Nombre de journées</label>
-                <input type="number" id="days" min="0" value="0" />
-                <div class="hint">50 € / journée</div>
-              </div>
-              <div class="field-group">
-                <label for="shots">Nombre de tirs</label>
-                <input type="number" id="shots" min="0" value="0" />
-                <div class="hint">2 € / tir</div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="field-group">
-                <label for="meals">Repas arbitres</label>
-                <input type="number" id="meals" min="0" value="0" />
-                <div class="hint">25 € / repas</div>
-              </div>
-              <div class="field-group" style="display:flex;align-items:flex-end">
-                <label class="pill" style="margin:0">
-                  <input type="checkbox" id="convivial" />
-                  <span>Moment de convivialité (50 €)</span>
-                </label>
-              </div>
-            </div>
-
-            <div class="breakdown" style="margin-top:16px">
-              <div class="line">
-                <span class="lbl">Journées</span>
-                <span class="val" id="bDays">0 €</span>
-              </div>
-              <div class="line">
-                <span class="lbl">Tirs</span>
-                <span class="val" id="bShots">0 €</span>
-              </div>
-              <div class="line">
-                <span class="lbl">Repas arbitres</span>
-                <span class="val" id="bMeals">0 €</span>
-              </div>
-              <div class="line">
-                <span class="lbl">Convivialité</span>
-                <span class="val" id="bConv">0 €</span>
-              </div>
-              <div class="total">
-                <span>TOTAL</span>
-                <span id="bTotal">0 €</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Col 2 -->
-      <div>
-        <div class="card">
-          <div class="head">
-            <h2>Total</h2>
-          </div>
-          <div class="body">
-            <div class="kpi">
-              <div class="big" id="totalBig">0 €</div>
-              <div class="sub" id="totalSub">0 journée • 0 tir • 0 repas • convivialité : non</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:20px">
-          <div class="head">
-            <h2>Validation</h2>
-          </div>
-          <div class="body">
-            <label class="pill" style="cursor:pointer;width:100%">
-              <input type="checkbox" id="attest" required />
-              <span style="flex:1">Attestation sur l'honneur du président du club</span>
-            </label>
-            <div class="hint" style="margin-top:10px">
-              Je soussigné(e), président(e) du club, atteste sur l'honneur l'exactitude des informations fournies.
-            </div>
-          </div>
-          <div class="actions">
-            <button type="submit" class="btn btn-primary" style="flex:1">✓ Valider la demande</button>
-            <button type="button" id="btnReset" class="btn btn-ghost">↺ Réinitialiser</button>
-          </div>
-          <div id="errorBox" class="err"></div>
-          <div class="note">
-            Une fois validée, tu pourras générer le PDF à transmettre au CD Tir 66.
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:20px">
-          <div class="head">
-            <h2>📄 Export PDF</h2>
-          </div>
-          <div class="body">
-            <button type="button" id="btnPdf" class="btn btn-primary" style="width:100%" disabled>
-              Télécharger le PDF
-            </button>
-          </div>
-          <div class="note">
-            Le PDF sera généré au format A4 avec toutes les informations saisies.
-          </div>
-        </div>
-      </div>
-    </form>
+      <button class="btn-primary" id="btnPdf" type="button">📄 Télécharger le PDF</button>
+      <button class="btn-light" id="btnPrint" type="button">🖨️ Imprimer</button>
+      <button class="btn-dark" id="btnReset" type="button">↺ Réinitialiser</button>
+    </div>
   </div>
 
-  <!-- PDF stage -->
-  <div class="pdf-stage">
-    <div id="pdfSheet" class="pdf-sheet"></div>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
-    const PRICE_DAY = 50;
-    const PRICE_SHOT = 2;
-    const PRICE_MEAL = 25;
-    const PRICE_CONV = 50;
-
-    const $ = id => document.getElementById(id);
-    const fields = {
-      root: $("root"),
-      form: $("form"),
-      clubName: $("clubName"),
-      clubFft: $("clubFft"),
-      eventName: $("eventName"),
-      eventDate: $("eventDate"),
-      place: $("place"),
-      notes: $("notes"),
-      contactName: $("contactName"),
-      contactEmail: $("contactEmail"),
-      contactTel: $("contactTel"),
-
-      days: $("days"),
-      shots: $("shots"),
-      meals: $("meals"),
-      convivial: $("convivial"),
-      attest: $("attest"),
-
-      btnReset: $("btnReset"),
-      btnPdf: $("btnPdf"),
-      errorBox: $("errorBox"),
-
-      totalBig: $("totalBig"),
-      totalSub: $("totalSub"),
-
-      bDays: $("bDays"),
-      bShots: $("bShots"),
-      bMeals: $("bMeals"),
-      bConv: $("bConv"),
-      bTotal: $("bTotal"),
-
-      pdfSheet: $("pdfSheet")
+    const $ = (id) => document.getElementById(id);
+    const n = (v) => {
+      const x = Number(String(v ?? "").replace(",", "."));
+      return Number.isFinite(x) ? x : 0;
     };
+    const eur = (x) =>
+      Number(x || 0).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 
-    let isValidated = false;
+    const TAUX_KM = 0.40;
+    const FAIT_A = "Saint-Cyprien";
 
-    function toInt(v){
-      const n = Number(v);
-      if (!Number.isFinite(n)) return 0;
-      return Math.max(0, Math.floor(n));
+    function calc(){
+      const km = n($("km").value);
+      const peage = n($("peage").value);
+      const hotel = n($("hotel").value);
+      const resto = n($("resto").value);
+      const autres = n($("autres").value);
+
+      const totalKm = (km > 0) ? km * TAUX_KM : 0;
+      $("totalKm").textContent = (km > 0) ? eur(totalKm) : "—";
+
+      const totalGen = totalKm + peage + hotel + resto + autres;
+      $("totalGen").textContent = eur(totalGen);
     }
-    function euro(n){ return `${n.toLocaleString("fr-FR")} €`; }
+    ["km","peage","hotel","resto","autres"].forEach(id => {
+      $(id).addEventListener("input", calc);
+    });
+    calc();
 
-    function escapeHtml(str){
-      return (str ?? "").toString()
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+    // ===== Bouton RETOUR (avec protection anti-perte de saisie) =====
+    let isDirty = false;
+    document.querySelectorAll("#pdfArea input, #pdfArea select").forEach(el => {
+      el.addEventListener("input", () => isDirty = true);
+      el.addEventListener("change", () => isDirty = true);
+    });
+
+    function goBack(){
+      if(isDirty){
+        const ok = confirm("Vous avez commencé à remplir le formulaire. Quitter sans enregistrer ?");
+        if(!ok) return;
+      }
+      try{
+        window.location.href = "index.html";
+      }catch(e){
+        history.back();
+      }
     }
+    $("btnBack").addEventListener("click", goBack);
+
+    // Boutons existants
+    $("btnPrint").addEventListener("click", () => window.print());
+    $("btnReset").addEventListener("click", () => location.reload());
+
     function safeName(s){
-      return (s || "Club").toString()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-        .replace(/[^a-zA-Z0-9-_ ]/g,"")
-        .trim().replace(/\s+/g,"_")
-        .slice(0,40) || "Club";
-    }
-
-    function compute(){
-      const days = toInt(fields.days.value);
-      const shots = toInt(fields.shots.value);
-      const meals = toInt(fields.meals.value);
-      const conv = fields.convivial.checked ? 1 : 0;
-
-      const amountDays = days * PRICE_DAY;
-      const amountShots = shots * PRICE_SHOT;
-      const amountMeals = meals * PRICE_MEAL;
-      const amountConv  = conv * PRICE_CONV;
-      const total = amountDays + amountShots + amountMeals + amountConv;
-
-      fields.totalBig.textContent = euro(total);
-      fields.totalSub.textContent =
-        `${days} journée${days>1?"s":""} • ${shots} tir${shots>1?"s":""} • ${meals} repas • convivialité : ${conv ? "oui" : "non"}`;
-
-      fields.bDays.textContent = euro(amountDays);
-      fields.bShots.textContent = euro(amountShots);
-      fields.bMeals.textContent = euro(amountMeals);
-      fields.bConv.textContent = euro(amountConv);
-      fields.bTotal.textContent = euro(total);
-
-      return { days, shots, meals, conv, amountDays, amountShots, amountMeals, amountConv, total };
-    }
-
-    function showError(msg){
-      fields.errorBox.style.display = "block";
-      fields.errorBox.textContent = msg;
-    }
-    function clearError(){
-      fields.errorBox.style.display = "none";
-      fields.errorBox.textContent = "";
-    }
-    function setValidated(state){
-      isValidated = state;
-      fields.btnPdf.disabled = !state;
-      fields.root.classList.toggle("validated", state);
-    }
-
-    ["input","change"].forEach(evt=>{
-      fields.days.addEventListener(evt, compute);
-      fields.shots.addEventListener(evt, compute);
-      fields.meals.addEventListener(evt, compute);
-      fields.convivial.addEventListener(evt, compute);
-    });
-
-    fields.btnReset.addEventListener("click", ()=>{
-      fields.form.reset();
-      fields.days.value = 0;
-      fields.shots.value = 0;
-      fields.meals.value = 0;
-      fields.convivial.checked = false;
-      fields.attest.checked = false;
-      clearError();
-      setValidated(false);
-      compute();
-    });
-
-    fields.form.addEventListener("submit", (e)=>{
-      e.preventDefault();
-      clearError();
-
-      const required = [fields.clubName, fields.eventName, fields.eventDate, fields.contactName, fields.contactEmail];
-      for (const el of required){
-        if (!el.value){
-          showError("Merci de compléter tous les champs obligatoires (club, compétition, date, contact, email).");
-          el.focus();
-          return;
-        }
-      }
-
-      const s = compute();
-      if (s.total <= 0){
-        showError("Le montant total doit être supérieur à 0 € pour valider la demande.");
-        return;
-      }
-
-      if (!fields.attest.checked){
-        showError("Merci de cocher l'attestation sur l'honneur du président du club.");
-        fields.attest.focus();
-        return;
-      }
-
-      setValidated(true);
-      alert("Demande validée ✅\nTu peux maintenant générer le PDF.");
-    });
-
-    function buildPdfHtml(){
-      const s = compute();
-      const date = fields.eventDate.value
-        ? new Date(fields.eventDate.value + "T00:00:00").toLocaleDateString("fr-FR")
-        : "-";
-      const now = new Date().toLocaleString("fr-FR");
-
-      const convTxt = s.conv ? "Oui (forfait 50 €)" : "Non (0 €)";
-      const attestTxt = fields.attest.checked ? "OUI" : "NON";
-
-      fields.pdfSheet.innerHTML = `
-        <div class="pdf-band">
-          <div>
-            <h1>Demande de Club — Remboursement organisation compétition départementale</h1>
-            <div class="meta">
-              Club : <b>${escapeHtml(fields.clubName.value)}</b>
-              ${fields.clubFft.value ? `• Affiliation : <b>${escapeHtml(fields.clubFft.value)}</b>` : ""}
-              <br/>
-              Compétition : <b>${escapeHtml(fields.eventName.value)}</b> • Date : <b>${escapeHtml(date)}</b>
-              <br/>
-              Contact : <b>${escapeHtml(fields.contactName.value)}</b> • ${escapeHtml(fields.contactEmail.value)}
-              ${fields.contactTel.value ? `• ${escapeHtml(fields.contactTel.value)}` : ""}
-              ${fields.place.value ? `<br/>Lieu : <b>${escapeHtml(fields.place.value)}</b>` : ""}
-              <br/>
-              Attestation sur l'honneur (président du club) : <b>${attestTxt}</b>
-            </div>
-          </div>
-          <div class="pdf-badge">Thème : Club (mauve)</div>
-        </div>
-
-        <div class="pdf-grid">
-          <div>
-            <div class="pdf-card">
-              <div class="hd">
-                <span>Éléments à rembourser</span>
-                <span style="font-weight:900;color:#3a1a7a;">Fixes : 50€ / 2€ / 25€ / 50€</span>
-              </div>
-              <div class="bd">
-                <div class="pdf-row">
-                  <div class="pdf-label">Journées (${s.days} × 50€)</div>
-                  <div class="pdf-val"><b>${euro(s.amountDays)}</b></div>
-                </div>
-                <div class="pdf-row">
-                  <div class="pdf-label">Tirs (${s.shots} × 2€)</div>
-                  <div class="pdf-val"><b>${euro(s.amountShots)}</b></div>
-                </div>
-                <div class="pdf-row">
-                  <div class="pdf-label">Repas arbitres (${s.meals} × 25€)</div>
-                  <div class="pdf-val"><b>${euro(s.amountMeals)}</b></div>
-                </div>
-                <div class="pdf-row">
-                  <div class="pdf-label">Moment de convivialité</div>
-                  <div class="pdf-val"><b>${escapeHtml(convTxt)}</b></div>
-                </div>
-                <div class="pdf-row" style="border-bottom:none;padding-top:8px;">
-                  <div class="pdf-label" style="font-weight:900;color:#0f1222;">TOTAL</div>
-                  <div class="pdf-val" style="font-weight:900;color:#0f1222;">${euro(s.total)}</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="pdf-visa">
-              <div class="pdf-box">
-                Visa CD Tir 66 (réservé au comité)<br/><br/>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div class="pdf-card">
-              <div class="hd">Total</div>
-              <div class="bd">
-                <div class="pdf-kpi">${euro(s.total)}</div>
-                <div class="pdf-small">
-                  ${s.days} journée${s.days>1?"s":""} • ${s.shots} tir${s.shots>1?"s":""} • ${s.meals} repas<br/>
-                  Convivialité : ${s.conv ? "oui" : "non"}
-                </div>
-
-                <div style="height:10px"></div>
-
-                <div class="pdf-row">
-                  <div class="pdf-label">Journées</div>
-                  <div class="pdf-val">${euro(s.amountDays)}</div>
-                </div>
-                <div class="pdf-row">
-                  <div class="pdf-label">Tirs</div>
-                  <div class="pdf-val">${euro(s.amountShots)}</div>
-                </div>
-                <div class="pdf-row">
-                  <div class="pdf-label">Repas</div>
-                  <div class="pdf-val">${euro(s.amountMeals)}</div>
-                </div>
-                <div class="pdf-row">
-                  <div class="pdf-label">Convivialité</div>
-                  <div class="pdf-val">${euro(s.amountConv)}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="pdf-footer">
-          <div>Généré le ${escapeHtml(now)}</div>
-          <div>CD Tir 66</div>
-        </div>
-      `;
+      return String(s||"")
+        .trim()
+        .replace(/[^\p{L}\p{N}\- ]/gu,"")
+        .replace(/\s+/g,"_");
     }
 
     async function generatePdf(){
-      if (!isValidated) return;
+      try{
+        if(!window.html2canvas) throw new Error("html2canvas non chargé");
+        if(!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF non chargé");
 
-      buildPdfHtml();
+        const required = ["nom","prenom","club","email","intitule","lieu","d1","d2"];
+        for(const id of required){
+          const el = $(id);
+          if(!el.value){
+            el.focus();
+            alert("Merci de compléter les champs obligatoires (*) avant de générer le PDF.");
+            return;
+          }
+        }
 
-      const club = safeName(fields.clubName.value);
-      const date = fields.eventDate.value ? fields.eventDate.value : "date";
-      const filename = `Demande_Club_${club}_${date}.pdf`;
+        const now = new Date();
+        const jj = String(now.getDate()).padStart(2,"0");
+        const mm = String(now.getMonth()+1).padStart(2,"0");
+        const aaaa = now.getFullYear();
+        $("faitaLine").textContent = `Fait à ${FAIT_A}, le ${jj}/${mm}/${aaaa}`;
 
-      const opt = {
-        margin: 0,
-        filename,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 1.6, useCORS: true, backgroundColor: "#ffffff" },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-      };
+        const area = $("pdfArea");
+        const actions = $("actionsBar");
 
-      await html2pdf().set(opt).from(fields.pdfSheet).save();
+        area.classList.add("pdf-mode");
+        const prevDisplay = actions.style.display;
+        actions.style.display = "none";
+
+        await new Promise(r => setTimeout(r, 60));
+
+        const canvas = await html2canvas(area, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          scrollX: 0,
+          scrollY: -window.scrollY
+        });
+
+        actions.style.display = prevDisplay || "flex";
+        area.classList.remove("pdf-mode");
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.92);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+
+        const margin = 3;
+        const maxW = pageW - margin*2;
+        const maxH = pageH - margin*2;
+
+        let imgW = maxW;
+        let imgH = (canvas.height * imgW) / canvas.width;
+
+        if(imgH > maxH){
+          imgH = maxH;
+          imgW = (canvas.width * imgH) / canvas.height;
+        }
+
+        const x = (pageW - imgW) / 2;
+        const y = margin;
+
+        pdf.addImage(imgData, "JPEG", x, y, imgW, imgH);
+
+        const filename = `Remboursement_Divers_${safeName($("nom").value)}_${safeName($("prenom").value)}.pdf`;
+        pdf.save(filename);
+
+      }catch(err){
+        console.error(err);
+        alert("Erreur PDF : " + (err?.message || err));
+        $("pdfArea")?.classList.remove("pdf-mode");
+        if($("actionsBar")) $("actionsBar").style.display = "flex";
+      }
     }
 
-    fields.btnPdf.addEventListener("click", generatePdf);
-
-    // Init
-    setValidated(false);
-    compute();
+    $("btnPdf").addEventListener("click", generatePdf);
   </script>
 </body>
 </html>
