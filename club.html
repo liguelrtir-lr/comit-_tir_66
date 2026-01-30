@@ -77,12 +77,22 @@
       background: radial-gradient(circle at 20% 80%, rgba(255,255,255,.15) 0%, transparent 50%);
       pointer-events: none;
     }
+    .header .logo{
+      height: 80px;
+      width: auto;
+      position: relative;
+      z-index: 1;
+      background: white;
+      padding: 8px;
+      border-radius: 12px;
+    }
     .header .title{
       display:flex;
       flex-direction:column;
       gap:4px;
       position: relative;
       z-index: 1;
+      flex: 1;
     }
     .header h1{
       margin:0;
@@ -536,6 +546,7 @@
 
   <div class="wrap" id="root">
     <div class="header">
+      <img src="logo-cdtir66.png" alt="CD Tir 66" class="logo">
       <div class="title">
         <h1>Demande de Club (Remboursement organisation compétition départementale)</h1>
         <p>Remplis ce formulaire pour générer la demande en PDF</p>
