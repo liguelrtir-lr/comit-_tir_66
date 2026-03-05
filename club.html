@@ -424,9 +424,16 @@
       width:794px;
       background:white;
       padding:30px 40px;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-family: Arial, Helvetica, sans-serif;
       color:#0f1222;
       box-sizing:border-box;
+      word-spacing: normal;
+      letter-spacing: normal;
+    }
+    .pdf-sheet *{
+      font-family: Arial, Helvetica, sans-serif;
+      word-spacing: normal;
+      letter-spacing: normal;
     }
     .pdf-band{
       display:flex;
@@ -1000,15 +1007,51 @@
       const date = fields.eventDate.value ? fields.eventDate.value : "date";
       const filename = `Demande_Club_${club}_${date}.pdf`;
 
+      // Cloner la feuille dans un wrapper visible mais invisible visuellement
+      const wrapper = document.createElement("div");
+      wrapper.style.cssText = [
+        "position:absolute",
+        "top:-9999px",
+        "left:0",
+        "width:794px",
+        "opacity:1",
+        "pointer-events:none",
+        "z-index:-1",
+        "background:white",
+        "overflow:visible"
+      ].join(";");
+
+      const clone = fields.pdfSheet.cloneNode(true);
+      // Retirer le positionnement hors-écran du clone
+      clone.style.position = "static";
+      clone.style.left = "";
+      clone.style.width = "794px";
+
+      wrapper.appendChild(clone);
+      document.body.appendChild(wrapper);
+
+      // Laisser le navigateur faire le rendu
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
       const opt = {
         margin: 0,
         filename,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 1.6, useCORS: true, backgroundColor: "#ffffff" },
+        html2canvas: {
+          scale: 1.6,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          scrollX: 0,
+          scrollY: 0
+        },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
       };
 
-      await html2pdf().set(opt).from(fields.pdfSheet).save();
+      try {
+        await html2pdf().set(opt).from(clone).save();
+      } finally {
+        document.body.removeChild(wrapper);
+      }
     }
 
     fields.btnPdf.addEventListener("click", generatePdf);
